@@ -15,6 +15,18 @@
   </noscript>
   <div id="app"></div>
   <!-- built files will be auto injected -->
+
+  <script src="https://webrtc.github.io/adapter/adapter-latest.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.0.4/socket.io.js"></script>
+  <script>
+    const serverUrl = 'http://localhost:5000'
+    const socket = io(serverUrl, {
+      query: {
+        token: 'camera-456'
+      }
+    });
+  </script>
+  <script src="/js/main.js"></script>
 </body>
 
 </html>
