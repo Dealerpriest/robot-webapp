@@ -11,6 +11,9 @@
 
 
 <style lang="scss">
+  @import "../public/styles/custom-bootstrap.scss";
+  @import '../node_modules/bootstrap/scss/bootstrap.scss';
+
 #app {
   font-family: 'Avenir', Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;

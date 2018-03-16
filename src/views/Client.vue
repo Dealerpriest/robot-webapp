@@ -16,7 +16,7 @@ export default {
   data: function() {
     return {
       user: {
-        id: 123
+        id: 1234
       }
     };
   },
