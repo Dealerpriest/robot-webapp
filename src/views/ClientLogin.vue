@@ -1,7 +1,9 @@
 <template>
   <div>
-    <form v-on:submit.prevent="login">
-      <label for="name">Name: </label><input v-model="name" type="text" />
+    <!-- <p v-if="!loggedIn">Skiapar en användare åt dig. Ge det en sekund :-)</p> -->
+    <h1>{{name}}</h1>
+    <form v-on:submit.prevent="updateName">
+      <label for="name">Vad heter du? </label><input v-model="name" type="text" />
       <button type="submit">login!</button>
     </form>
   </div>
@@ -9,6 +11,8 @@
 
 <script>
 import firebase from 'firebase';
+// Convenience function for mapping mutations to methods of this componenet
+import { mapMutations } from 'vuex';
 
 export default {
   name: 'clientLogin',
@@ -18,27 +22,17 @@ export default {
     };
   },
   methods: {
-    login() {
-      console.log('trying to login to firebase');
-      firebase
-        .auth()
-        .signInAnonymously()
-        .catch(function(error) {
-          // Handle Errors here.
-          var errorCode = error.code;
-          var errorMessage = error.message;
-          console.log(errorCode + errorMessage);
-          // ...
-        });
-    }
-  },
-  created() {
-    console.log('login component created');
-    firebase.auth().onAuthStateChanged(function(user) {
+    updateName() {
+      let user = firebase.auth().currentUser;
       if (user) {
-        console.log(user);
+        user.updateProfile({ displayName: this.name }).then(() => {
+          this.setName(this.name);
+          this.$router.push('/');
+        });
       }
-    });
-  }
+    },
+    ...mapMutations(['setName'])
+  },
+  created() {}
 };
 </script>

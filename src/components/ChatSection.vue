@@ -1,15 +1,19 @@
 <template>
-  <MessageList :user="user"></MessageList>
+  <div>
+    <MessageList></MessageList>
+    <ChatInput></ChatInput>
+  </div>
 </template>
 
 <script>
 import MessageList from '@/components/MessageList.vue';
+import ChatInput from './ChatInput.vue';
 
 export default {
   name: 'chatSection',
-  props: ['user'],
   components: {
-    MessageList
+    MessageList,
+    ChatInput
   }
 };
 </script>

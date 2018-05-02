@@ -1,0 +1,3 @@
+[submodule "preload-webpack-plugin"]
+	path = preload-webpack-plugin
+	url = https://github.com/Dealerpriest/preload-webpack-plugin.git
