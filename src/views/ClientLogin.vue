@@ -1,6 +1,6 @@
 <template>
   <div>
-    <!-- <p v-if="!loggedIn">Skiapar en användare åt dig. Ge det en sekund :-)</p> -->
+    <!-- <p v-if="!loggedIn">Skapar en användare åt dig. Ge det en sekund :-)</p> -->
     <h1>{{name}}</h1>
     <form v-on:submit.prevent="updateName">
       <label for="name">Vad heter du? </label><input v-model="name" type="text" />
@@ -38,6 +38,5 @@ export default {
 </script>
 
 <style>
-
 
 </style>

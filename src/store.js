@@ -29,11 +29,47 @@ const chatModule = {
   }
 };
 
+const webRTCModule = {
+  state: {
+    localStreams: [],
+    remoteStreams: [],
+    robotCommand: 'None'
+  },
+  mutations: {
+    addRemoteStream(state, stream) {
+      state.remoteStreams.push(stream);
+    },
+    addLocalStream(state, stream) {
+      state.localStreams.push(stream);
+    },
+    setRobotCommand(state, command) {
+      state.robotCommand = command;
+    }
+  }
+};
+
+// const socketModule = {
+//   state: {
+//     serialSocket: null,
+//     signalingSocket: null
+//   },
+//   mutations: {
+//     setSerialSocket(state, socket) {
+//       state.serialSocket = socket;
+//     },
+//     setSignalingSocket(state, socket) {
+//       state.signalingSocket = socket;
+//     }
+//   }
+// };
+
 export default new Vuex.Store({
   strict: process.env.NODE_ENV !== 'production',
   modules: {
     user: userModule,
-    chat: chatModule
+    chat: chatModule,
+    webRTC: webRTCModule
+    // sockets: socketModule
   },
   state: {},
   mutations: {},

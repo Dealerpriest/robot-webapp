@@ -1,8 +1,8 @@
 <template>
-  <form v-on:submit.prevent="sendMessage">
-    <input type="text" v-model="msg">
-    <button type="submit">send!</button>
-  </form>
+  <v-form v-on:submit.prevent="sendMessage">
+    <v-text-field label="Message" v-model="msg"></v-text-field>
+    <v-btn color="primary">Send</v-btn>
+  </v-form>
 </template>
 
 <script>

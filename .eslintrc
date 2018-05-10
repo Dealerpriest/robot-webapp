@@ -1,7 +1,7 @@
 {
   "root": true,
-  "extends": [
-    "plugin:vue/essential",
-    "eslint:recommended"
-  ]
+  "extends": ["plugin:vue/essential", "eslint:recommended"],
+  "rules": {
+    "operator-linebreak": ["error", "before"]
+  }
 }

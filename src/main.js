@@ -5,35 +5,11 @@ import store from './store';
 
 import firebase from 'firebase';
 
-// import io from 'socket.io-client';
-
-// import VueSocketio from '../../Vue-Socket.io';
-
-// // Create different socket connections depending on environment variables.
-// // hmmmm. thats not what we want... What the f am i doing here??
-// let connections = {};
-// let webRTCToken;
-// if (process.env.VUE_APP_IS_ROBOT) {
-//   webRTCToken = process.env.VUE_APP_ROBOT_TOKEN;
-
-//   connections.robot = io('http://localhost:3000', {
-//     query: {
-//       token: webRTCToken
-//     }
-//   });
-// } else {
-//   webRTCToken = process.env.VUE_APP_CLIENT_TOKEN;
-// }
-
-// connections.webRTC = io('http://localhost:5000', {
-//   query: {
-//     token: webRTCToken
-//   }
-// });
-
-// Vue.use(VueSocketio, connections);
-
-// let robotSocket;
+//Imports all stuff needed for having vuetify look properly. Except the roboto font, which is linked from index.html
+import Vuetify from 'vuetify';
+Vue.use(Vuetify);
+import 'vuetify/dist/vuetify.min.css';
+import 'material-design-icons-iconfont/dist/material-design-icons.scss';
 
 Vue.config.productionTip = false;
 

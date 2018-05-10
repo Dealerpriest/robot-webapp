@@ -7,3 +7,5 @@
 * [ ] Explore interaction models for looking around. Both with servo rig and 360.
 * [ ] Perhaps separate route for admin, for using chat and view client camera stream
 * [ ] Visualization that shows offset when panning camera. If the servo is slower than the interaction
+* [ ] Error recovery when no com port detected in websocket-to-serial
+* [ ] Security for the robot route. Only the robot should be allowed (preferably possible to turn on off in heroku ENV)

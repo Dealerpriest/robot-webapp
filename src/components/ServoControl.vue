@@ -3,7 +3,8 @@
 </template>
 
 <script>
-import { robotSocket } from '@/views/Robot.vue';
+import serialSocket from '@/js/serialsocket.js';
+
 export default {
   name: 'servoControl',
   data() {
@@ -16,11 +17,12 @@ export default {
     sendPitch() {
       console.log('sliding');
       let pitchStr = 'pitch:' + this.pitch + '\n';
-      robotSocket.emit('cameraControl', pitchStr);
+      serialSocket.emit('cameraControl', pitchStr);
     }
   },
   created() {
-    console.log(robotSocket);
+    console.log('serialsocket:');
+    console.log(serialSocket);
   }
 };
 </script>

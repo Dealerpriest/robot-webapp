@@ -1,6 +1,6 @@
 <template>
   <div>
-    <h2 class="button" style="font-weight: bold; text-align: center;">{{user.id}}</h2>
+    <!-- <h2 class="button" style="font-weight: bold; text-align: center;">{{user.id}}</h2> -->
     <div v-for="message in chat.msgs" :key="message.id">
       <!-- <FromMessage :message="message"></FromMessage> -->
       <component :message="message" :is="message.sender === user.id? 'FromMessage': 'ToMessage'"></component>
