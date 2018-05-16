@@ -1,7 +1,7 @@
 //SIGNALING AND WEBRTC
 
 import webRTCConnection from '@/js/webRTCConnection.js';
-import store from '@/store';
+// import store from '@/store';
 import serialSocket from '@/js/serialsocket.js';
 
 export default class robotConnector extends webRTCConnection {
@@ -96,7 +96,11 @@ export default class robotConnector extends webRTCConnection {
         let command = event.data;
         console.log('robotControlChannel message received: ' + command);
         // robotCommand.innerHTML = command;
-        store.commit('setRobotCommand', command);
+        // if (command.includes('!')) {
+        //   store.commit('unsetRobotControlKey', command.substring(1));
+        // } else {
+        //   store.commit('setRobotControlKey', command);
+        // }
         serialSocket.emit('motorControl', command);
       };
 

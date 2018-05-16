@@ -32,8 +32,15 @@ const chatModule = {
 const webRTCModule = {
   state: {
     localStreams: [],
-    remoteStreams: [],
-    robotCommand: 'None'
+    remoteStreams: []
+    // robotControl: {
+    //   ArrowUp: false,
+    //   ArrowDown: false,
+    //   ArrowLeft: false,
+    //   ArrowRight: false,
+    //   z: false,
+    //   x: false
+    // }
   },
   mutations: {
     addRemoteStream(state, stream) {
@@ -41,10 +48,13 @@ const webRTCModule = {
     },
     addLocalStream(state, stream) {
       state.localStreams.push(stream);
-    },
-    setRobotCommand(state, command) {
-      state.robotCommand = command;
     }
+    // setRobotControlKey(state, command) {
+    //   state.robotControl[command] = true;
+    // },
+    // unsetRobotControlKey(state, command) {
+    //   state.robotControl[command] = false;
+    // }
   }
 };
 

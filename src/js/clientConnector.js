@@ -1,5 +1,6 @@
 //SIGNALING
 import webRTCConnection from '@/js/webRTCConnection.js';
+// import store from '@/store';
 
 export default class clientConnector extends webRTCConnection {
   constructor(
@@ -28,6 +29,8 @@ export default class clientConnector extends webRTCConnection {
       console.log('ondatachannel event:');
       console.log(event);
       let receiveChannel = event.channel;
+      //object containing references to intervals that are running
+      let commandRepeaters = {};
       if (receiveChannel.label === 'chatChannel') {
         console.log('chatChannel added');
         receiveChannel.onmessage = function(event) {
@@ -45,40 +48,42 @@ export default class clientConnector extends webRTCConnection {
         // };
       } else if (receiveChannel.label === 'robotControlChannel') {
         console.log('robotControlChannel added');
+        let allowedKeys = [
+          'ArrowLeft',
+          'ArrowRight',
+          'ArrowUp',
+          'ArrowDown',
+          'z',
+          'x'
+        ];
         document.onkeydown = event => {
-          //bail out if this is a key held down event
-          if (event.repeat) return;
-          console.log('keydown');
           let keyValue = event.key;
-          if (
-            !(
-              keyValue === 'ArrowLeft'
-              || keyValue === 'ArrowUp'
-              || keyValue === 'ArrowRight'
-              || keyValue === 'ArrowDown'
-            )
-          ) {
-            return;
-          }
+          console.log('keydown: ' + keyValue);
+          //bail out if this is a key held down event
+          //or if it isn't a valid control key
+          if (event.repeat || !allowedKeys.includes(keyValue)) return;
           if (receiveChannel.readyState === 'open') {
-            console.log('keypressed');
+            console.log(keyValue + ' pressed down');
+            // store.commit('setRobotControlKey', keyValue);
             receiveChannel.send(keyValue);
+            commandRepeaters[keyValue] = setInterval(() => {
+              receiveChannel.send(keyValue);
+            }, 100);
           }
         };
         document.onkeyup = event => {
           let keyValue = event.key;
-          if (
-            ! (
-              keyValue === 'ArrowLeft'
-              || keyValue === 'ArrowUp'
-              || keyValue === 'ArrowRight'
-              || keyValue === 'ArrowDown'
-            )
-          ) {
+          //bail out if it isn't a valid control key
+          if (!allowedKeys.includes(keyValue)) {
             return;
           }
           if (receiveChannel.readyState === 'open') {
-            receiveChannel.send('!'+keyValue);
+            console.log(keyValue + ' released');
+            // store.commit('unsetRobotControlKey', keyValue);
+            if (commandRepeaters[keyValue]) {
+              clearInterval(commandRepeaters[keyValue]);
+            }
+            receiveChannel.send('!' + keyValue);
           }
         };
       }
