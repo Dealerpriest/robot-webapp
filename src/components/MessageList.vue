@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div id="messages-container">
     <!-- <h2 class="button" style="font-weight: bold; text-align: center;">{{user.id}}</h2> -->
     <div v-for="message in chat.msgs" :key="message.id">
       <!-- <FromMessage :message="message"></FromMessage> -->
@@ -56,3 +56,13 @@ export default {
   }
 };
 </script>
+
+<style lang="scss" scoped>
+#messages-container {
+  flex-direction: column;
+  justify-content: flex-end;
+  flex: 1;
+  display: flex;
+  overflow: hidden;
+}
+</style>

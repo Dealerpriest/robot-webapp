@@ -1,8 +1,16 @@
 <template>
-  <div>
-    <MessageList></MessageList>
-    <ChatInput></ChatInput>
-  </div>
+  <!-- <div> -->
+  <v-container fluid fill-height>
+    <v-layout column justify-end>
+      <!-- <v-flex> -->
+        <MessageList></MessageList>
+      <!-- </v-flex> -->
+      <!-- <v-flex> -->
+        <ChatInput></ChatInput>
+      <!-- </v-flex> -->
+    </v-layout>
+  </v-container>
+  <!-- </div> -->
 </template>
 
 <script>

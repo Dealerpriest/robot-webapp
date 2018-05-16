@@ -1,54 +1,21 @@
 <template>
 <v-app id="inspire" dark>
-  <v-navigation-drawer
-      clipped
-      fixed
-      v-model="drawer"
-      app
-  >
-    <v-list dense>
-      <p class="nametag">{{ user.name }}</p>
-      <ChatSection></ChatSection>
-      <!-- <router-link tag="li" to="/">
-        <v-list-tile @click="nothing">
-          <v-list-tile-action>
-            <v-icon>person</v-icon>
-          </v-list-tile-action>
-          <v-list-tile-content>
-            <v-list-tile-title>client</v-list-tile-title>
-          </v-list-tile-content>
-        </v-list-tile>
-      </router-link>
-      <router-link tag="li" to="/robot">
-        <v-list-tile @click="nothing">
-          <v-list-tile-action>
-            <v-icon>event_seat</v-icon>
-          </v-list-tile-action>
-          <v-list-tile-content>
-            <v-list-tile-title>robot</v-list-tile-title>
-          </v-list-tile-content>
-        </v-list-tile>
-      </router-link> -->
-    </v-list>
-  </v-navigation-drawer>
-    <v-toolbar app fixed clipped-left>
-      <v-toolbar-side-icon @click.stop="drawer = !drawer"></v-toolbar-side-icon>
-      <v-toolbar-title>Chat</v-toolbar-title>
-    </v-toolbar>
-    <v-content>
-      <v-container fluid fill-height>
-        <v-layout row wrap>
-          <ServoControl></ServoControl>
-          <v-flex v-for="(stream, index) in webRTC.remoteStreams" :key=index xs6>
-            <RobotVideo  :stream="stream"></RobotVideo>
-          </v-flex>
-        </v-layout>
-      </v-container>
-    </v-content>
-    <v-footer app fixed>
-      <span>&copy; 2017</span>
-    </v-footer>
-  </v-app>
+  <v-container fluid fill-height>
+    <v-layout row>
+      <transition name="slide-fade">
+        <!-- <h2 v-if="chat">Baaaajs!</h2> -->
+        <v-flex id="chat-drawer" v-if="chat" xs2>
+          <v-card style="max-height: 95vh" height="100%">
+              <ChatSection></ChatSection>
+          </v-card>
+        </v-flex>
+      </transition>
+      <v-flex>
+          <RobotVideo id="big-video" v-if="thetaStream"  :stream-object="thetaStream"></RobotVideo>
+      </v-flex>
+    </v-layout>
+  </v-container>
+</v-app>
 </template>
 
 <script>
@@ -64,7 +31,19 @@ import { mapState, mapMutations } from 'vuex';
 
 export default {
   name: 'client',
-  computed: mapState(['user', 'webRTC']),
+  computed: {
+    thetaStream() {
+      return this.webRTC.remoteStreams.find(streamObj => {
+        return streamObj.label.includes('THETA');
+      });
+    },
+    // logitechStream() {
+    //   return this.webRTC.remoteStreams.find(streamObj => {
+    //     return streamObj.label.includes('logitech');
+    //   });
+    // },
+    ...mapState(['user', 'webRTC'])
+  },
   methods: mapMutations(['setId', 'setName']),
   components: {
     ChatSection,
@@ -73,7 +52,8 @@ export default {
   },
   data() {
     return {
-      drawer: true
+      chat: true,
+      chatDrawerWidth: 200
     };
   },
   created() {
@@ -108,3 +88,41 @@ export default {
   }
 };
 </script>
+
+<style lang="scss" scoped>
+/* Enter and leave animations can use different */
+/* durations and timing functions.              */
+.slide-fade-enter-active {
+  transition: all 0.2s ease;
+
+  overflow: hidden;
+}
+.slide-fade-leave-active {
+  transition: all 0.2s ease;
+}
+.slide-fade-enter,
+.slide-fade-leave-to {
+  // transform: translateX(-100px);
+  // width: 0%;
+  flex: 0;
+  min-width: 0 !important;
+  overflow: hidden;
+  opacity: 0;
+}
+
+#chat-drawer {
+  min-width: 300px;
+}
+
+#big-video {
+  // background-image: url('http://i.imgur.com/OWRKwAA.jpg');
+  // background-size: cover;
+  // width: 100%;
+  height: auto;
+  // overflow: hidden;
+  // position: absolute;
+  // margin: 100px;
+  // left: 0;
+  // top: 0;
+}
+</style>

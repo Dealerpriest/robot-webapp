@@ -20,7 +20,6 @@ export default class clientConnector extends webRTCConnection {
     );
 
     console.log('creating a webRTC clientConnector object');
-
     this.robotConnection = this.createPeerConection();
     this.robotConnection.onicecandidate = stuff =>
       this.handleIceCandidate(stuff);
@@ -69,7 +68,7 @@ export default class clientConnector extends webRTCConnection {
         document.onkeyup = event => {
           let keyValue = event.key;
           if (
-            !(
+            ! (
               keyValue === 'ArrowLeft'
               || keyValue === 'ArrowUp'
               || keyValue === 'ArrowRight'
@@ -79,7 +78,7 @@ export default class clientConnector extends webRTCConnection {
             return;
           }
           if (receiveChannel.readyState === 'open') {
-            receiveChannel.send('None');
+            receiveChannel.send('!'+keyValue);
           }
         };
       }
@@ -98,6 +97,10 @@ export default class clientConnector extends webRTCConnection {
       if ((msg = JSON.parse(data))) {
         console.log('RTC offer message: ');
         console.log(msg);
+
+        this.mediaLabels = msg.mediaLabels;
+        console.log(this.mediaLabels);
+
         if (msg.offer) {
           let offerHandlingResult = this.handleOfferOrAnswer(
             this.robotConnection,

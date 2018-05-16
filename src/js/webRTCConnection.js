@@ -14,6 +14,9 @@ export default class webRTCConnection {
     this.token = token;
 
     ///CONNECT TO SIGNALING SERVER
+    console.log(
+      'Connecting to signaling server: ' + serverUrl + ' token: ' + token
+    );
     this.socket = io(serverUrl, {
       query: {
         token: token
@@ -28,6 +31,7 @@ export default class webRTCConnection {
     this.pcConfig = { iceServers: [{ urls: 'stun:stun.l.google.com:19302' }] };
     this.localStream;
     this.remoteStream;
+    this.mediaLabels = null;
 
     this.readyForIce = false;
     this.iceQueue = [];
@@ -58,10 +62,15 @@ export default class webRTCConnection {
     return pc.createDataChannel(label, { reliable: true });
   }
 
-  handleRemoteStreamAdded(event) {
+  handleRemoteStreamAdded = event => {
     console.log('Remote stream added. Event: ', event);
-    this.remoteStream = event.stream;
-    store.commit('addRemoteStream', this.remoteStream);
+    // this.remoteStream = event.stream;
+    // console.log(this.remoteStream.getTracks());
+    console.log(this.mediaLabels);
+    let remoteStream = {};
+    remoteStream['label'] = this.mediaLabels[event.stream.id];
+    remoteStream['stream'] = event.stream;
+    store.commit('addRemoteStream', remoteStream);
     if (this.remoteVideoPool) {
       let videoElement = document.createElement('video');
       videoElement.autoplay = true;
@@ -72,7 +81,7 @@ export default class webRTCConnection {
     //   console.log("adding remote stream to video element");
     //   remoteVideo.srcObject = remoteStream;
     // }
-  }
+  };
 
   handleRemoteStreamRemoved(event) {
     console.log('Remote stream removed. Event: ', event);
@@ -105,6 +114,8 @@ export default class webRTCConnection {
       let caps = track.getCapabilities();
       console.log('capabilities: ');
       console.log(caps);
+      stream.givenName = track.label;
+      console.log(stream);
 
       pc.addTrack(track, stream);
     });
@@ -113,7 +124,7 @@ export default class webRTCConnection {
   }
 
   //returns a promise that resolves if the offer was created and sent to the signal server.
-  createOfferAndSend(pc, targetSocketId) {
+  createOfferAndSend(pc, targetSocketId, labels) {
     console.log('creating offer for pc: ');
     console.log(pc);
     return pc.createOffer().then(desc => {
@@ -128,7 +139,11 @@ export default class webRTCConnection {
       console.log(desc);
       this.socket.emit(
         'offer',
-        JSON.stringify({ targetSocketId: targetSocketId, offer: desc })
+        JSON.stringify({
+          targetSocketId: targetSocketId,
+          offer: desc,
+          mediaLabels: labels
+        })
       );
     });
   }

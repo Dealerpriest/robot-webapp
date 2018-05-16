@@ -1,7 +1,17 @@
 <template>
   <v-form v-on:submit.prevent="sendMessage">
-    <v-text-field label="Message" v-model="msg"></v-text-field>
-    <v-btn color="primary">Send</v-btn>
+    <!-- <v-container fluid>
+      <v-layout row>
+        <v-flex> -->
+          <v-text-field label="Message" v-model="msg"></v-text-field>
+        <!-- </v-flex> -->
+        <!-- <v-flex xs2>
+          <v-btn fab small type="submit" color="primary">
+            <v-icon>send</v-icon>
+          </v-btn>
+        </v-flex> -->
+      <!-- </v-layout>
+    </v-container> -->
   </v-form>
 </template>
 

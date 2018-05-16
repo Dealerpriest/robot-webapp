@@ -7,7 +7,7 @@
 export default {
   name: 'RobotVideo',
   props: {
-    stream: null
+    streamObject: null
   },
   data() {
     return {};
@@ -15,15 +15,16 @@ export default {
   mounted() {
     console.log(this.$refs);
 
-    this.$refs.videoElement.srcObject = this.stream;
+    this.$refs.videoElement.srcObject = this.streamObject.stream;
   }
 };
 </script>
 
 <style lang="scss" scoped>
 video {
+  overflow: hidden;
   width: 100%;
-  height: auto;
+  // height: auto;
 }
 </style>
 

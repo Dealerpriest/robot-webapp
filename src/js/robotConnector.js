@@ -43,7 +43,7 @@ export default class robotConnector extends webRTCConnection {
           this.mediaPromises.push({
             mediaPromise: this.getLocalMedia({
               audio: this.mediaConstraints.audio,
-              video: { deviceId: deviceInfo.deviceId } //, frameRate: 15 }
+              video: { deviceId: deviceInfo.deviceId, frameRate: 15 }
             }),
             label: deviceInfo.label
           });
@@ -100,11 +100,15 @@ export default class robotConnector extends webRTCConnection {
         serialSocket.emit('motorControl', command);
       };
 
+      // This is a hack to identify different mediadevices on receiver end. Couldn't find any'proper' way to do it.
+      // So we send the label and id pairs separately and pair them with their streams on the receiving end. Ugly...
+      let labelsAndIds = {};
       let streamPromises = [];
       this.mediaPromises.forEach(({ mediaPromise, label }) => {
         streamPromises.push(
           mediaPromise.then(stream => {
             console.log(label);
+            labelsAndIds[stream.id] = label;
             this.addOutgoingStream(this.peers[id].pc, stream);
           })
         );
@@ -112,7 +116,9 @@ export default class robotConnector extends webRTCConnection {
       Promise.all(streamPromises)
         // .then(stream => addOutgoingStream(peers[id].pc, stream))
         // eslint-disable-next-line
-        .then(resolveValues => this.createOfferAndSend(this.peers[id].pc, id));
+        .then(resolveValues =>
+          this.createOfferAndSend(this.peers[id].pc, id, labelsAndIds)
+        );
     });
 
     this.socket.on('removeClient', id => {

@@ -12,7 +12,7 @@ const token = process.env.VUE_APP_ROBOT_TOKEN;
 // require('@/js/camera.js');
 
 // eslint-disable-next-line
-import serialSocket from '@/js/serialsocket.js';
+// import serialSocket from '@/js/serialsocket.js';
 
 // import webRTCConnection from '@/js/webRTCConnection.js';
 // eslint-disable-next-line

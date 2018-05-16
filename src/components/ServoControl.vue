@@ -3,7 +3,7 @@
 </template>
 
 <script>
-import serialSocket from '@/js/serialsocket.js';
+// import serialSocket from '@/js/serialsocket.js';
 
 export default {
   name: 'servoControl',
@@ -16,13 +16,13 @@ export default {
   methods: {
     sendPitch() {
       console.log('sliding');
-      let pitchStr = 'pitch:' + this.pitch + '\n';
-      serialSocket.emit('cameraControl', pitchStr);
+      // let pitchStr = 'pitch:' + this.pitch + '\n';
+      // serialSocket.emit('cameraControl', pitchStr);
     }
   },
   created() {
     console.log('serialsocket:');
-    console.log(serialSocket);
+    // console.log(serialSocket);
   }
 };
 </script>
