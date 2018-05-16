@@ -67,6 +67,7 @@ export default class clientConnector extends webRTCConnection {
             // store.commit('setRobotControlKey', keyValue);
             receiveChannel.send(keyValue);
             commandRepeaters[keyValue] = setInterval(() => {
+              console.log('sending interval command: ' + keyValue);
               receiveChannel.send(keyValue);
             }, 100);
           }
