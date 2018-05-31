@@ -43,7 +43,12 @@ export default class robotConnector extends webRTCConnection {
           this.mediaPromises.push({
             mediaPromise: this.getLocalMedia({
               audio: this.mediaConstraints.audio,
-              video: { deviceId: deviceInfo.deviceId, frameRate: 15 }
+              video: {
+                deviceId: { exact: deviceInfo.deviceId },
+                frameRate: 15
+                // width: { min: 1920, ideal: 3840, max: 3840 },
+                // height: { min: 1080, ideal: 2160, max: 2160 }
+              }
             }),
             label: deviceInfo.label
           });
@@ -95,13 +100,14 @@ export default class robotConnector extends webRTCConnection {
       this.peers[id].robotControlChannel.onmessage = event => {
         let command = event.data;
         console.log('robotControlChannel message received: ' + command);
-        // robotCommand.innerHTML = command;
-        // if (command.includes('!')) {
-        //   store.commit('unsetRobotControlKey', command.substring(1));
-        // } else {
-        //   store.commit('setRobotControlKey', command);
-        // }
-        serialSocket.emit('motorControl', command);
+        if (
+          command.startsWith('changePitch')
+          || command.startsWith('changeYaw')
+        ) {
+          serialSocket.emit('cameraControl', command);
+        } else {
+          serialSocket.emit('motorControl', command);
+        }
       };
 
       // This is a hack to identify different mediadevices on receiver end. Couldn't find any'proper' way to do it.
@@ -109,13 +115,15 @@ export default class robotConnector extends webRTCConnection {
       let labelsAndIds = {};
       let streamPromises = [];
       this.mediaPromises.forEach(({ mediaPromise, label }) => {
-        streamPromises.push(
-          mediaPromise.then(stream => {
-            console.log(label);
-            labelsAndIds[stream.id] = label;
-            this.addOutgoingStream(this.peers[id].pc, stream);
-          })
-        );
+        if (label.includes('THETA') || label.includes('BRIO')) {
+          streamPromises.push(
+            mediaPromise.then(stream => {
+              console.log(label);
+              labelsAndIds[stream.id] = label;
+              this.addOutgoingStream(this.peers[id].pc, stream);
+            })
+          );
+        }
       });
       Promise.all(streamPromises)
         // .then(stream => addOutgoingStream(peers[id].pc, stream))

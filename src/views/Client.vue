@@ -6,13 +6,25 @@
         <!-- <h2 v-if="chat">Baaaajs!</h2> -->
         <v-flex id="chat-drawer" v-if="chat" xs2>
           <v-card style="max-height: 95vh" height="100%">
-              <ChatSection></ChatSection>
+              <Chat></Chat>
           </v-card>
         </v-flex>
       </transition>
       <v-flex>
-          <RobotVideo id="big-video" v-if="thetaStream"  :stream-object="thetaStream"></RobotVideo>
+        <KeyStates></KeyStates>
+        <v-container fluid>
+          <v-layout row>
+            <v-flex xs6>
+              <RobotVideo class="big-video" v-if="thetaStream"  :stream-object="thetaStream" key="theta-video"></RobotVideo>
+            </v-flex>
+            <v-flex xs6>
+              <RobotVideoMovable class="big-video" v-if="brioStream"  :stream-object="brioStream" key="brio-video"></RobotVideoMovable>
+              <!-- <RobotVideo class="big-video" v-if="brioStream"  :stream-object="brioStream" key="brio-video"></RobotVideo> -->
+            </v-flex>
+          </v-layout>
+        </v-container>
       </v-flex>
+      
     </v-layout>
   </v-container>
 </v-app>
@@ -24,9 +36,11 @@ import firebase from 'firebase';
 // eslint-disable-next-line
 import clientConnector from '@/js/clientConnector.js';
 
-import ChatSection from '@/components/ChatSection.vue';
+import Chat from '@/components/Chat.vue';
 import RobotVideo from '@/components/RobotVideo.vue';
-import ServoControl from '@/components/ServoControl.vue';
+import RobotVideoMovable from '@/components/RobotVideoMovable.vue';
+import KeyStates from '@/components/KeyStates.vue';
+// import ServoControl from '@/components/ServoControl.vue';
 import { mapState, mapMutations } from 'vuex';
 
 export default {
@@ -37,26 +51,49 @@ export default {
         return streamObj.label.includes('THETA');
       });
     },
-    // logitechStream() {
-    //   return this.webRTC.remoteStreams.find(streamObj => {
-    //     return streamObj.label.includes('logitech');
-    //   });
-    // },
+    brioStream() {
+      return this.webRTC.remoteStreams.find(streamObj => {
+        return streamObj.label.includes('BRIO');
+      });
+    },
     ...mapState(['user', 'webRTC'])
   },
-  methods: mapMutations(['setId', 'setName']),
+  methods: {
+    // changeViewAngle(){
+    //   console.log('change view triggered');
+    //   this.viewAngle++;
+    //   this.viewAngle%=3;
+    // },
+    ...mapMutations(['setId', 'setName'])
+  },
   components: {
-    ChatSection,
+    Chat,
     RobotVideo,
-    ServoControl
+    RobotVideoMovable,
+    KeyStates
+    // ServoControl
   },
   data() {
     return {
-      chat: true,
-      chatDrawerWidth: 200
+      chat: false
+      // chatDrawerWidth: 200
+      // viewAngle: 1
     };
   },
   created() {
+    // window.document.onkeydown = event => {
+    //       let keyValue = event.key;
+    //       console.log('event keydown: ' + keyValue);
+    //     };
+
+    // document.onkeydown = event => {
+    //   console.log('created key event');
+    //   let keyValue = event.key;
+    //   if(keyValue === 'c'){
+    //     console.log('change view!!');
+    //     this.changeViewAngle();
+    //   }
+    // }
     const serverUrl = process.env.VUE_APP_SIGNALING_SERVER_URL;
     const token = process.env.VUE_APP_CLIENT_TOKEN;
     // eslint-disable-next-line
@@ -114,10 +151,10 @@ export default {
   min-width: 300px;
 }
 
-#big-video {
+.big-video {
   // background-image: url('http://i.imgur.com/OWRKwAA.jpg');
   // background-size: cover;
-  // width: 100%;
+  width: 100%;
   height: auto;
   // overflow: hidden;
   // position: absolute;

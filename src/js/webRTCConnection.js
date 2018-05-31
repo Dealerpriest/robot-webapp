@@ -115,7 +115,7 @@ export default class webRTCConnection {
       console.log('capabilities: ');
       console.log(caps);
       stream.givenName = track.label;
-      console.log(stream);
+      // console.log(stream);
 
       pc.addTrack(track, stream);
     });

@@ -3,7 +3,7 @@
   <v-container fluid fill-height>
     <v-layout column justify-end>
       <!-- <v-flex> -->
-        <MessageList></MessageList>
+        <ChatMessageList></ChatMessageList>
       <!-- </v-flex> -->
       <!-- <v-flex> -->
         <ChatInput></ChatInput>
@@ -14,13 +14,13 @@
 </template>
 
 <script>
-import MessageList from '@/components/MessageList.vue';
+import ChatMessageList from '@/components/ChatMessageList.vue';
 import ChatInput from './ChatInput.vue';
 
 export default {
-  name: 'chatSection',
+  name: 'chat',
   components: {
-    MessageList,
+    ChatMessageList,
     ChatInput
   }
 };

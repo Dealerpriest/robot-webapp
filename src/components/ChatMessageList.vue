@@ -3,19 +3,19 @@
     <!-- <h2 class="button" style="font-weight: bold; text-align: center;">{{user.id}}</h2> -->
     <div v-for="message in chat.msgs" :key="message.id">
       <!-- <FromMessage :message="message"></FromMessage> -->
-      <component :message="message" :is="message.sender === user.id? 'FromMessage': 'ToMessage'"></component>
+      <component :message="message" :is="message.sender === user.id? 'ChatMessageFrom': 'ChatMessageTo'"></component>
     </div>
 
   </div>
 </template>
 
 <script>
-import FromMessage from '@/components/FromMessage.vue';
-import ToMessage from '@/components/ToMessage.vue';
+import ChatMessageFrom from '@/components/ChatMessageFrom.vue';
+import ChatMessageTo from '@/components/ChatMessageTo.vue';
 import { mapState } from 'vuex';
 
 export default {
-  name: 'messageList',
+  name: 'chatMessageList',
   // data() {
   //   return {
   //     messages: [
@@ -51,8 +51,8 @@ export default {
     ...mapState(['user', 'chat'])
   },
   components: {
-    FromMessage,
-    ToMessage
+    ChatMessageFrom,
+    ChatMessageTo
   }
 };
 </script>

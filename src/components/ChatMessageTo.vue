@@ -4,7 +4,7 @@
 
 <script>
 export default {
-  name: 'toMessage',
+  name: 'chatMessageTo',
   props: ['message']
 };
 </script>

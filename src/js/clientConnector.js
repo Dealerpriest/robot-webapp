@@ -1,6 +1,6 @@
 //SIGNALING
 import webRTCConnection from '@/js/webRTCConnection.js';
-// import store from '@/store';
+import store from '@/store';
 
 export default class clientConnector extends webRTCConnection {
   constructor(
@@ -28,64 +28,120 @@ export default class clientConnector extends webRTCConnection {
     this.robotConnection.ondatachannel = event => {
       console.log('ondatachannel event:');
       console.log(event);
-      let receiveChannel = event.channel;
-      //object containing references to intervals that are running
-      let commandRepeaters = {};
-      if (receiveChannel.label === 'chatChannel') {
+      let dataChannel = event.channel;
+
+      if (dataChannel.label === 'chatChannel') {
         console.log('chatChannel added');
-        receiveChannel.onmessage = function(event) {
+        dataChannel.onmessage = function(event) {
           console.log('datachannel message received: ' + event.data);
           // textReceiver.value = event.data;
         };
-
         // textReceiver.oninput = () => {
         //   console.log('input trigger');
         //   var data = textReceiver.value;
-        //   console.log('readyState is ' + receiveChannel.readyState);
-        //   if (receiveChannel.readyState === 'open') {
-        //     receiveChannel.send(data);
+        //   console.log('readyState is ' + dataChannel.readyState);
+        //   if (dataChannel.readyState === 'open') {
+        //     dataChannel.send(data);
         //   }
         // };
-      } else if (receiveChannel.label === 'robotControlChannel') {
+      } else if (dataChannel.label === 'robotControlChannel') {
         console.log('robotControlChannel added');
+        store.subscribe((mutation, state) => {
+          if (dataChannel.readyState === 'open') {
+            //Handle servocontrol
+            if (
+              mutation.type === 'changePitch'
+              || mutation.type === 'changeYaw'
+            ) {
+              dataChannel.send(mutation.type + mutation.payload);
+            }
+
+            //Handle keypresses
+            if (mutation.type === 'setKeyState') {
+              dataChannel.send(mutation.payload);
+
+              let sendStamp = null;
+              let keyUpdate = timestamp => {
+                if (!sendStamp) sendStamp = timestamp;
+                let progress = timestamp - sendStamp;
+                if (
+                  progress > 100
+                  && state.webRTC.keyStates[mutation.payload]
+                ) {
+                  console.log('datachannel sending: ' + mutation.payload);
+                  dataChannel.send(mutation.payload);
+                  sendStamp = timestamp;
+                }
+                if (state.webRTC.keyStates[mutation.payload]) {
+                  window.requestAnimationFrame(keyUpdate);
+                }
+              };
+              window.requestAnimationFrame(keyUpdate);
+            } else if (mutation.type === 'unsetKeyState') {
+              let msg = '!' + mutation.payload;
+              console.log('datachannel sending: ' + msg);
+              dataChannel.send(msg);
+            }
+          }
+        });
+
         let allowedKeys = [
           'ArrowLeft',
           'ArrowRight',
           'ArrowUp',
           'ArrowDown',
           'z',
-          'x'
+          'x',
+          'b',
+          'm',
+          'h',
+          'n'
         ];
+        let keyStates = {};
+        for (let i = 0; i < allowedKeys.length; i++) {
+          const key = allowedKeys[i];
+          keyStates[key] = false;
+        }
+        store.commit('setAllKeyStates', keyStates);
+
         document.onkeydown = event => {
           let keyValue = event.key;
           console.log('keydown: ' + keyValue);
           //bail out if this is a key held down event
           //or if it isn't a valid control key
           if (event.repeat || !allowedKeys.includes(keyValue)) return;
-          if (receiveChannel.readyState === 'open') {
-            console.log(keyValue + ' pressed down');
-            // store.commit('setRobotControlKey', keyValue);
-            receiveChannel.send(keyValue);
-            commandRepeaters[keyValue] = setInterval(() => {
-              console.log('sending interval command: ' + keyValue);
-              receiveChannel.send(keyValue);
-            }, 100);
+          // keyStates[keyValue] = true;
+          store.commit('setKeyState', keyValue);
+          if (dataChannel.readyState === 'open') {
+            // console.log(keyValue + ' pressed down');
+            // dataChannel.send(keyValue);
           }
         };
         document.onkeyup = event => {
           let keyValue = event.key;
           //bail out if it isn't a valid control key
           if (!allowedKeys.includes(keyValue)) {
+            console.log('filtered out key: ' + keyValue);
             return;
           }
-          if (receiveChannel.readyState === 'open') {
-            console.log(keyValue + ' released');
-            // store.commit('unsetRobotControlKey', keyValue);
-            if (commandRepeaters[keyValue]) {
-              clearInterval(commandRepeaters[keyValue]);
-            }
-            receiveChannel.send('!' + keyValue);
-          }
+          // keyStates[keyValue] = false;
+          store.commit('unsetKeyState', keyValue);
+          // if (dataChannel.readyState === 'open') {
+          //   console.log(keyValue + ' released');
+
+          //   // dataChannel.send('!' + keyValue);
+          // }
+        };
+
+        window.onblur = () => {
+          console.log(
+            '%c window no longer in focus! ',
+            'background: #222; color: #bada55'
+          );
+          //Deactivate all keys if leaving window!
+          // console.log(keyStates);
+          // Object.keys(keyStates).forEach(v => (keyStates[v] = false));
+          store.commit('unsetAllKeyStates');
         };
       }
     };
@@ -153,10 +209,10 @@ export default class clientConnector extends webRTCConnection {
 // robotConnection.ondatachannel = evt => {
 //   console.log('ondatachannel event:');
 //   console.log(evt);
-//   let receiveChannel = event.channel;
-//   if (receiveChannel.label === 'chatChannel') {
+//   let dataChannel = event.channel;
+//   if (dataChannel.label === 'chatChannel') {
 //     console.log('chatChannel added');
-//     receiveChannel.onmessage = function(event) {
+//     dataChannel.onmessage = function(event) {
 //       console.log('datachannel message received: ' + event.data);
 //       textReceiver.value = event.data;
 //     };
@@ -164,12 +220,12 @@ export default class clientConnector extends webRTCConnection {
 //     textReceiver.oninput = () => {
 //       console.log('input trigger');
 //       var data = textReceiver.value;
-//       console.log('readyState is ' + receiveChannel.readyState);
-//       if (receiveChannel.readyState === 'open') {
-//         receiveChannel.send(data);
+//       console.log('readyState is ' + dataChannel.readyState);
+//       if (dataChannel.readyState === 'open') {
+//         dataChannel.send(data);
 //       }
 //     };
-//   } else if (receiveChannel.label === 'robotControlChannel') {
+//   } else if (dataChannel.label === 'robotControlChannel') {
 //     console.log('robotControlChannel added');
 //     document.onkeydown = event => {
 //       console.log('keydown');
@@ -184,9 +240,9 @@ export default class clientConnector extends webRTCConnection {
 //       ) {
 //         return;
 //       }
-//       if (receiveChannel.readyState === 'open') {
+//       if (dataChannel.readyState === 'open') {
 //         console.log('keypressed');
-//         receiveChannel.send(keyValue);
+//         dataChannel.send(keyValue);
 //       }
 //     };
 //     document.onkeyup = event => {
@@ -201,8 +257,8 @@ export default class clientConnector extends webRTCConnection {
 //       ) {
 //         return;
 //       }
-//       if (receiveChannel.readyState === 'open') {
-//         receiveChannel.send('None');
+//       if (dataChannel.readyState === 'open') {
+//         dataChannel.send('None');
 //       }
 //     };
 //   }

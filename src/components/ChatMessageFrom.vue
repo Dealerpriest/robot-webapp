@@ -4,7 +4,7 @@
 
 <script>
 export default {
-  name: 'fromMessage',
+  name: 'chatMessageFrom',
   props: ['message']
 };
 </script>

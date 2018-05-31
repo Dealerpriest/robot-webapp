@@ -5,10 +5,16 @@
   "scripts": {
     "start": "npm run serve",
     "serve": "vue-cli-service serve",
+    "serve-production": "vue-cli-service serve --mode=production",
     "build": "vue-cli-service build",
+    "build-dev": "vue-cli-service build --mode=development",
     "lint": "vue-cli-service lint"
   },
   "dependencies": {
+    "@fortawesome/fontawesome": "^1.1.8",
+    "@fortawesome/fontawesome-free-brands": "^5.0.13",
+    "@fortawesome/fontawesome-free-regular": "^5.0.13",
+    "@fortawesome/fontawesome-free-solid": "^5.0.13",
     "firebase": "^4.11.0",
     "material-design-icons-iconfont": "^3.0.3",
     "socket.io-client": "^2.0.4",

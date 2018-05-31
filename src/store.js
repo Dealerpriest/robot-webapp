@@ -32,15 +32,8 @@ const chatModule = {
 const webRTCModule = {
   state: {
     localStreams: [],
-    remoteStreams: []
-    // robotControl: {
-    //   ArrowUp: false,
-    //   ArrowDown: false,
-    //   ArrowLeft: false,
-    //   ArrowRight: false,
-    //   z: false,
-    //   x: false
-    // }
+    remoteStreams: [],
+    keyStates: {}
   },
   mutations: {
     addRemoteStream(state, stream) {
@@ -48,13 +41,44 @@ const webRTCModule = {
     },
     addLocalStream(state, stream) {
       state.localStreams.push(stream);
+    },
+    setAllKeyStates(state, keys) {
+      state.keyStates = Object.assign({}, keys);
+      // Object.assign(state.keyStates, keys);
+      // state.keyStates = keys;
+    },
+    unsetAllKeyStates(state) {
+      Object.keys(state.keyStates).forEach(
+        key => (state.keyStates[key] = false)
+      );
+    },
+    setKeyState(state, key) {
+      state.keyStates[key] = true;
+    },
+    unsetKeyState(state, key) {
+      state.keyStates[key] = false;
     }
-    // setRobotControlKey(state, command) {
-    //   state.robotControl[command] = true;
-    // },
-    // unsetRobotControlKey(state, command) {
-    //   state.robotControl[command] = false;
-    // }
+  }
+};
+
+const servoModule = {
+  state: {
+    pitch: 90,
+    yaw: 90
+  },
+  mutations: {
+    setPitch(state, value) {
+      state.pitch = value;
+    },
+    setYaw(state, value) {
+      state.yaw = value;
+    },
+    changePitch(state, amount) {
+      state.pitch += amount;
+    },
+    changeYaw(state, amount) {
+      state.yaw += amount;
+    }
   }
 };
 
@@ -78,7 +102,8 @@ export default new Vuex.Store({
   modules: {
     user: userModule,
     chat: chatModule,
-    webRTC: webRTCModule
+    webRTC: webRTCModule,
+    servo: servoModule
     // sockets: socketModule
   },
   state: {},
