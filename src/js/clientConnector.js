@@ -72,6 +72,7 @@ export default class clientConnector extends webRTCConnection {
                   dataChannel.send(mutation.payload);
                   sendStamp = timestamp;
                 }
+
                 if (state.webRTC.keyStates[mutation.payload]) {
                   window.requestAnimationFrame(keyUpdate);
                 }
@@ -146,14 +147,25 @@ export default class clientConnector extends webRTCConnection {
       }
     };
 
+    store.commit('clearLocalStreams');
     this.mediaConstraints = { audio: false, video: true };
-    // let mediaPromise = getLocalMedia().then(addOutgoingStream);
+    this.getLocalMedia(this.mediaConstraints).then(stream => {
+      //If we can't find a label, let's use the streamId as backup.
+      let label = stream.id;
+      let videoTracks = stream.getVideoTracks();
+      if (videoTracks.length) {
+        label = videoTracks[0].label;
+      }
+      store.commit('addLocalStream', { label: label, stream: stream });
+      this.addOutgoingStream(this.robotConnection, stream);
+    });
 
     this.socket.on('robotConnected', () => {
       console.log('robot is available according to server');
     });
 
     this.socket.on('offer', data => {
+      store.commit('clearRemoteStreams');
       // el.innerHTML = 'RTC offer message: ' + data;
       let msg;
       if ((msg = JSON.parse(data))) {
@@ -181,7 +193,7 @@ export default class clientConnector extends webRTCConnection {
       let msg;
       // el.innerHTML = 'RTC ice candidate received: ' + data;
       if ((msg = JSON.parse(data))) {
-        console.log('RTC ice candidate received:');
+        console.log('RTC ice candidate received from robot:');
         console.log(msg);
         if (msg.candidate) {
           this.handleIncomingIce(this.robotConnection, msg.candidate);
@@ -199,114 +211,3 @@ export default class clientConnector extends webRTCConnection {
     });
   }
 }
-
-// let el = document.getElementById('socket-data');
-// let textReceiver = document.getElementById('text-receive-area');
-
-// robotConnection = createPeerConection();
-// robotConnection.onicecandidate = handleIceCandidate;
-
-// robotConnection.ondatachannel = evt => {
-//   console.log('ondatachannel event:');
-//   console.log(evt);
-//   let dataChannel = event.channel;
-//   if (dataChannel.label === 'chatChannel') {
-//     console.log('chatChannel added');
-//     dataChannel.onmessage = function(event) {
-//       console.log('datachannel message received: ' + event.data);
-//       textReceiver.value = event.data;
-//     };
-
-//     textReceiver.oninput = () => {
-//       console.log('input trigger');
-//       var data = textReceiver.value;
-//       console.log('readyState is ' + dataChannel.readyState);
-//       if (dataChannel.readyState === 'open') {
-//         dataChannel.send(data);
-//       }
-//     };
-//   } else if (dataChannel.label === 'robotControlChannel') {
-//     console.log('robotControlChannel added');
-//     document.onkeydown = event => {
-//       console.log('keydown');
-//       let keyValue = event.key;
-//       if (
-//         !(
-//           keyValue === 'ArrowLeft' ||
-//           keyValue === 'ArrowUp' ||
-//           keyValue === 'ArrowRight' ||
-//           keyValue === 'ArrowDown'
-//         )
-//       ) {
-//         return;
-//       }
-//       if (dataChannel.readyState === 'open') {
-//         console.log('keypressed');
-//         dataChannel.send(keyValue);
-//       }
-//     };
-//     document.onkeyup = event => {
-//       let keyValue = event.key;
-//       if (
-//         !(
-//           keyValue === 'ArrowLeft' ||
-//           keyValue === 'ArrowUp' ||
-//           keyValue === 'ArrowRight' ||
-//           keyValue === 'ArrowDown'
-//         )
-//       ) {
-//         return;
-//       }
-//       if (dataChannel.readyState === 'open') {
-//         dataChannel.send('None');
-//       }
-//     };
-//   }
-// };
-
-// let mediaConstraints = { audio: false, video: true };
-// // let mediaPromise = getLocalMedia().then(addOutgoingStream);
-
-// socket.on('robotConnected', () => {
-//   console.log('robot is available according to server');
-// });
-
-// socket.on('offer', data => {
-//   el.innerHTML = 'RTC offer message: ' + data;
-//   if ((msg = JSON.parse(data))) {
-//     console.log('RTC offer message: ');
-//     console.log(msg);
-//     if (msg.offer) {
-//       let handleOfferResult = handleOfferOrAnswer(
-//         robotConnection,
-//         msg.offer
-//       ).then(() => {
-//         console.log('offer handled. Continuing to create answer');
-//         return createAnswerAndSend(robotConnection);
-//         // return mediaPromise.then(createAnswerAndSend);
-//       });
-//       console.log(handleOfferResult);
-//     }
-//   }
-// });
-
-// socket.on('ice', data => {
-//   let msg;
-//   el.innerHTML = 'RTC ice candidate received: ' + data;
-//   if ((msg = JSON.parse(data))) {
-//     console.log('RTC ice candidate received:');
-//     console.log(msg);
-//     if (msg.candidate) {
-//       handleIncomingIce(robotConnection, msg.candidate);
-//     }
-//   }
-// });
-
-// socket.on('signalingMessage', function(data) {
-//   let msg;
-//   el.innerHTML = 'socket signaling message received: ' + data;
-//   if ((msg = JSON.parse(data))) {
-//     console.log('socket signaling message received');
-//     console.log(msg);
-//   }
-// });

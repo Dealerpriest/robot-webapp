@@ -11,20 +11,26 @@
         </v-flex>
       </transition>
       <v-flex>
-        <KeyStates></KeyStates>
+        <ConnectionStateIcon :isConnected="webRTC.isConnectedToSignalingServer" labelText="Socket to Signaling server: "></ConnectionStateIcon>
+        <RobotControls></RobotControls>
         <v-container fluid>
-          <v-layout row>
-            <v-flex xs6>
+          <v-layout row wrap>
+            <v-flex sm6 xs12>
               <RobotVideo class="big-video" v-if="thetaStream"  :stream-object="thetaStream" key="theta-video"></RobotVideo>
+              <div v-else class="big-video"><p>No THETA stream acquired</p></div>
             </v-flex>
-            <v-flex xs6>
+            <v-flex sm6 xs12>
               <RobotVideoMovable class="big-video" v-if="brioStream"  :stream-object="brioStream" key="brio-video"></RobotVideoMovable>
-              <!-- <RobotVideo class="big-video" v-if="brioStream"  :stream-object="brioStream" key="brio-video"></RobotVideo> -->
+              <div v-else class="big-video"><p>No BRIO stream acquired</p></div>
+            </v-flex>
+          </v-layout>
+          <v-layout row wrap>
+            <v-flex v-for="stream in remoteStreams" :key="stream.label" md6 sm12>
+              <RobotVideo class="big-video" :stream-object="stream" ></RobotVideo>
             </v-flex>
           </v-layout>
         </v-container>
-      </v-flex>
-      
+      </v-flex>   
     </v-layout>
   </v-container>
 </v-app>
@@ -39,8 +45,9 @@ import clientConnector from '@/js/clientConnector.js';
 import Chat from '@/components/Chat.vue';
 import RobotVideo from '@/components/RobotVideo.vue';
 import RobotVideoMovable from '@/components/RobotVideoMovable.vue';
-import KeyStates from '@/components/KeyStates.vue';
+import RobotControls from '@/components/RobotControls.vue';
 // import ServoControl from '@/components/ServoControl.vue';
+import ConnectionStateIcon from '@/components/ConnectionStateIcon.vue';
 import { mapState, mapMutations } from 'vuex';
 
 export default {
@@ -56,7 +63,13 @@ export default {
         return streamObj.label.includes('BRIO');
       });
     },
-    ...mapState(['user', 'webRTC'])
+    remoteStreams() {
+      return this.webRTC.remoteStreams;
+    },
+    ...mapState({
+      user: state => state.client.userState,
+      webRTC: state => state.webRTC
+    })
   },
   methods: {
     // changeViewAngle(){
@@ -64,13 +77,14 @@ export default {
     //   this.viewAngle++;
     //   this.viewAngle%=3;
     // },
-    ...mapMutations(['setId', 'setName'])
+    ...mapMutations(['setUserId', 'setUserName'])
   },
   components: {
     Chat,
     RobotVideo,
     RobotVideoMovable,
-    KeyStates
+    RobotControls,
+    ConnectionStateIcon
     // ServoControl
   },
   data() {
@@ -118,8 +132,8 @@ export default {
         this.loggedIn = true;
         console.log('user logged in: ');
         console.log(user);
-        this.setId(user.uid);
-        this.setName(user.displayName);
+        this.setUserId(user.uid);
+        this.setUserName(user.displayName);
       }
     });
   }

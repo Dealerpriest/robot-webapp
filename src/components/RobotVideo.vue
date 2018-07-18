@@ -1,6 +1,7 @@
 <template>
   <!-- <div> -->
     <!-- <a @click.prevent="addSource">add srcObject</a> -->
+    
     <video id="video-tag" ref="videoElement" autoplay>
     </video>
   <!-- </div> -->

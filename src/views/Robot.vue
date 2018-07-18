@@ -1,34 +1,39 @@
 <template>
-  <div class="robot">
-    <h1>Yo! This is the robot route!</h1>
-  </div>
+  <v-app dark>
+    <ConnectionStateIcon :isConnected="webRTC.isConnectedToSignalingServer" labelText="Socket to Signaling server: "></ConnectionStateIcon>
+    <ConnectionStateIcon :isConnected="webRTC.isConnectedToWebsocketToSerialServer" labelText="Socket to Serial server: "></ConnectionStateIcon>
+    <v-container fluid fill-height>
+      <v-layout row>
+        <RobotVideo class="big-video" v-for="stream in remoteStreams" :stream-object="stream" :key="stream.label"></RobotVideo>
+      </v-layout>
+    </v-container>
+  </v-app>
 </template>
 
 <script>
-// import io from 'socket.io-client';
 const serverUrl = process.env.VUE_APP_SIGNALING_SERVER_URL;
 const token = process.env.VUE_APP_ROBOT_TOKEN;
-// require('@/js/main.js');
-// require('@/js/camera.js');
 
-// eslint-disable-next-line
-// import serialSocket from '@/js/serialsocket.js';
-
-// import webRTCConnection from '@/js/webRTCConnection.js';
 // eslint-disable-next-line
 import robotConnector from '@/js/robotConnector.js';
 // eslint-disable-next-line
 const robotConnection = new robotConnector(serverUrl, token);
-// const connection = webRTCConnection(serverUrl, token);
-// import ServoControl from '@/components/ServoControl.vue';
 
-// navigator.mediaDevices.getUserMedia({ video: true, audio: false });
+import RobotVideo from '@/components/RobotVideo.vue';
+import ConnectionStateIcon from '@/components/ConnectionStateIcon.vue';
+import { mapState } from 'vuex';
 export default {
   name: 'robot',
   data() {
     return {
       // robotSocket: ''
     };
+  },
+  computed: {
+    remoteStreams() {
+      return this.webRTC.remoteStreams;
+    },
+    ...mapState(['user', 'webRTC'])
   },
   // computed: mapState(['serialSocket']),
   // methods: mapMutations(['setSerialSocket']),
@@ -49,6 +54,8 @@ export default {
     // document.head.appendChild(cameraScriptTag);
   },
   components: {
+    RobotVideo,
+    ConnectionStateIcon
     // ServoControl
   }
 };

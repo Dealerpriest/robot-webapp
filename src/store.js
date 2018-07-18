@@ -3,17 +3,30 @@ import Vuex from 'vuex';
 
 Vue.use(Vuex);
 
-const userModule = {
+const robotModule = {
   state: {
-    id: '',
-    name: ''
+    isConnectedToWebsocketSerialServer: false
   },
   mutations: {
-    setId(state, id) {
-      state.id = id;
+    setWebsocketToSerialServerConnection(state, value) {
+      state.isConnectedToWebsocketSerialServer = value;
+    }
+  }
+};
+
+const clientModule = {
+  state: {
+    userState: {
+      id: '',
+      name: ''
+    }
+  },
+  mutations: {
+    setUserId(state, id) {
+      state.userState.id = id;
     },
-    setName(state, name) {
-      state.name = name;
+    setUserName(state, name) {
+      state.userState.name = name;
     }
   }
 };
@@ -31,16 +44,26 @@ const chatModule = {
 
 const webRTCModule = {
   state: {
+    isConnectedToSignalingServer: false,
     localStreams: [],
     remoteStreams: [],
     keyStates: {}
   },
   mutations: {
+    setSignalingServerConnection(state, active) {
+      state.isConnectedToSignalingServer = active;
+    },
     addRemoteStream(state, stream) {
       state.remoteStreams.push(stream);
     },
     addLocalStream(state, stream) {
       state.localStreams.push(stream);
+    },
+    clearRemoteStreams(state) {
+      state.remoteStreams = [];
+    },
+    clearLocalStreams(state) {
+      state.localStreams = [];
     },
     setAllKeyStates(state, keys) {
       state.keyStates = Object.assign({}, keys);
@@ -97,10 +120,12 @@ const servoModule = {
 //   }
 // };
 
+//TODO: Is the production check really correct? Check vuex documentation.
 export default new Vuex.Store({
   strict: process.env.NODE_ENV !== 'production',
   modules: {
-    user: userModule,
+    client: clientModule,
+    robot: robotModule,
     chat: chatModule,
     webRTC: webRTCModule,
     servo: servoModule

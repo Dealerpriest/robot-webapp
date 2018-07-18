@@ -1,4 +1,5 @@
 import io from 'socket.io-client';
+import store from '@/store';
 const serverUrl = process.env.VUE_APP_SERIAL_SOCKET_SERVER_URL;
 
 const serialSocket = io(serverUrl, {
@@ -9,7 +10,13 @@ const serialSocket = io(serverUrl, {
 
 serialSocket.on('connect', () => {
   console.log('connected to serial socket');
+  store.commit('isConnectedToWebsocketSerialServer', true);
   serialSocket.send("hello I'm the robot <3");
+});
+
+serialSocket.on('disconnect', () => {
+  console.log('disconnected from serial socket');
+  store.commit('isConnectedToWebsocketSerialServer', false);
 });
 
 export default serialSocket;

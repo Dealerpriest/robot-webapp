@@ -24,7 +24,9 @@ export default {
       msg: ''
     };
   },
-  computed: mapState(['user']),
+  computed: mapState({
+    user: state => state.client.userState
+  }),
   methods: {
     sendMessage() {
       let msg = { sender: this.user.id, msg: this.msg };

@@ -31,12 +31,11 @@ export default {
         });
       }
     },
-    ...mapMutations(['setName'])
+    ...mapMutations(['setUserName'])
   },
   created() {}
 };
 </script>
 
 <style>
-
 </style>

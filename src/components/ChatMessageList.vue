@@ -48,7 +48,10 @@ export default {
   //   };
   // },
   computed: {
-    ...mapState(['user', 'chat'])
+    ...mapState({
+      user: state => state.client.userState,
+      chat: state => state.chat
+    })
   },
   components: {
     ChatMessageFrom,
