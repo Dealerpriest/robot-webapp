@@ -1,7 +1,12 @@
 <template>
   <v-app dark>
-    <ConnectionStateIcon :isConnected="webRTC.isConnectedToSignalingServer" labelText="Socket to Signaling server: "></ConnectionStateIcon>
-    <ConnectionStateIcon :isConnected="webRTC.isConnectedToWebsocketToSerialServer" labelText="Socket to Serial server: "></ConnectionStateIcon>
+    <ConnectionStateList>
+      <ConnectionStateListItem :isOkay="robot.isConnectedToWebsocketSerialServer" labelText="Socket to Serial server: "></ConnectionStateListItem>
+      <ConnectionStateListItem :isOkay="webRTC.isConnectedToSignalingServer" labelText="Socket to Signaling server: "></ConnectionStateListItem>
+      <ConnectionStateListItem :isOkay="webRTC.offerCreated" labelText="Offer created: "></ConnectionStateListItem>
+      <ConnectionStateListItem :isOkay="webRTC.offerSent" labelText="Offer sent: "></ConnectionStateListItem>
+      <ConnectionStateListItem :isOkay="webRTC.answerReceived" labelText="Answer received: "></ConnectionStateListItem>
+    </ConnectionStateList>
     <v-container fluid fill-height>
       <v-layout row>
         <RobotVideo class="big-video" v-for="stream in remoteStreams" :stream-object="stream" :key="stream.label"></RobotVideo>
@@ -20,7 +25,8 @@ import robotConnector from '@/js/robotConnector.js';
 const robotConnection = new robotConnector(serverUrl, token);
 
 import RobotVideo from '@/components/RobotVideo.vue';
-import ConnectionStateIcon from '@/components/ConnectionStateIcon.vue';
+import ConnectionStateListItem from '@/components/ConnectionStateListItem.vue';
+import ConnectionStateList from '@/components/ConnectionStateList.vue';
 import { mapState } from 'vuex';
 export default {
   name: 'robot',
@@ -33,7 +39,7 @@ export default {
     remoteStreams() {
       return this.webRTC.remoteStreams;
     },
-    ...mapState(['user', 'webRTC'])
+    ...mapState(['user', 'webRTC', 'robot'])
   },
   // computed: mapState(['serialSocket']),
   // methods: mapMutations(['setSerialSocket']),
@@ -55,7 +61,8 @@ export default {
   },
   components: {
     RobotVideo,
-    ConnectionStateIcon
+    ConnectionStateListItem,
+    ConnectionStateList
     // ServoControl
   }
 };

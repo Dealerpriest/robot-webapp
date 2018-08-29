@@ -182,13 +182,17 @@ export default class robotConnector extends webRTCConnection {
       // }
       let msg;
       if ((msg = JSON.parse(data))) {
-        console.log('RTC signaling answer message received');
+        console.log('RTC answer message: ');
         console.log(msg);
-        if (msg.fromSocketId && msg.answer) {
+        if (msg.fromSocketId && msg.answer && msg.mediaLabels) {
+          this.mediaLabels = msg.mediaLabels;
+          console.log(this.mediaLabels);
+          store.commit('setAnswerReceived', true);
           let handleAnswerResult = this.handleOfferOrAnswer(
             this.peers[msg.fromSocketId].pc,
             msg.answer
           ).then(() => {
+            store.commit('setAnswerHandled', true);
             console.log('answer handled. Continuing');
             //respond whenever the camera is accepted.
             // console.log(mediaPromise);
@@ -197,6 +201,8 @@ export default class robotConnector extends webRTCConnection {
           });
           console.log('handleAnswerResult: ');
           console.log(handleAnswerResult);
+        } else {
+          console.log('invalid answer!');
         }
       }
     });

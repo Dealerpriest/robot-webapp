@@ -10,13 +10,13 @@ const serialSocket = io(serverUrl, {
 
 serialSocket.on('connect', () => {
   console.log('connected to serial socket');
-  store.commit('isConnectedToWebsocketSerialServer', true);
+  store.commit('setWebsocketToSerialServerConnection', true);
   serialSocket.send("hello I'm the robot <3");
 });
 
 serialSocket.on('disconnect', () => {
   console.log('disconnected from serial socket');
-  store.commit('isConnectedToWebsocketSerialServer', false);
+  store.commit('setWebsocketToSerialServerConnection', false);
 });
 
 export default serialSocket;

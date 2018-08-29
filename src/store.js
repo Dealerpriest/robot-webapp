@@ -45,13 +45,61 @@ const chatModule = {
 const webRTCModule = {
   state: {
     isConnectedToSignalingServer: false,
+    offerCreated: false,
+    offerSent: false,
+    offerReceived: false,
+    answerCreated: false,
+    answerSent: false,
+    answerReceived: false,
     localStreams: [],
     remoteStreams: [],
     keyStates: {}
   },
   mutations: {
+    // eslint-disable-next-line
+    resetWebRTCState(state) {
+      //TODO: double check whether it's really ok to replace the whole state object.
+      state = {
+        isConnectedToSignalingServer: false,
+        offerCreated: false,
+        offerSent: false,
+        offerReceived: false,
+        offerHandled: false,
+        answerCreated: false,
+        answerSent: false,
+        answerReceived: false,
+        answerHandled: false,
+        localStreams: [],
+        remoteStreams: [],
+        keyStates: {}
+      };
+    },
     setSignalingServerConnection(state, active) {
       state.isConnectedToSignalingServer = active;
+    },
+    setOfferCreated(state, created) {
+      state.offerCreated = created;
+    },
+    setOfferSent(state, sent) {
+      state.offerSent = sent;
+    },
+    setOfferReceived(state, received) {
+      state.offerReceived = received;
+    },
+    setOfferHandled(state, handled) {
+      state.offerHandled = handled;
+    },
+    setAnswerCreated(state, created) {
+      state.answerCreated = created;
+    },
+    setAnswerSent(state, sent) {
+      state.answerSent = sent;
+    },
+    setAnswerReceived(state, received) {
+      state.answerReceived = received;
+    },
+    setAnswerHandled(state, handled) {
+      state.answerHandled = handled;
     },
     addRemoteStream(state, stream) {
       state.remoteStreams.push(stream);

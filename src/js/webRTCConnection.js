@@ -67,7 +67,7 @@ export default class webRTCConnection {
 
   createPeerConection() {
     let pc = new RTCPeerConnection(this.pcConfig);
-    pc.onremovestream = this.handleRemoteStreamRemoved;
+    // pc.onremovestream = this.handleRemoteStreamRemoved;
 
     pc.ontrack = this.handleRemoteTrackAdded;
 
@@ -83,6 +83,7 @@ export default class webRTCConnection {
     // this.remoteStream = event.stream;
     // console.log(this.remoteStream.getTracks());
     console.log(this.mediaLabels);
+    console.log(event.streams[0].id);
     let remoteStream = {};
     if (this.mediaLabels[event.streams[0].id]) {
       console.log('matching received stream with presaved label.');
@@ -127,7 +128,7 @@ export default class webRTCConnection {
       // let caps = track.getCapabilities();
       // console.log('capabilities: ');
       // console.log(caps);
-      stream.givenName = track.label;
+      // stream.givenName = track.label;
       // console.log(stream);
 
       pc.addTrack(track, stream);
@@ -141,6 +142,7 @@ export default class webRTCConnection {
     console.log('creating offer');
     // console.log(pc);
     return pc.createOffer().then(desc => {
+      store.commit('setOfferCreated', true);
       // console.log('setting local description');
       pc.setLocalDescription(desc);
       // .then((desc) => {
@@ -158,13 +160,15 @@ export default class webRTCConnection {
           mediaLabels: labels
         })
       );
+      store.commit('setOfferSent', true);
     });
   }
 
   //returns a promise that resolves if the answer was created and sent to the signal server.
-  createAnswerAndSend(pc) {
+  createAnswerAndSend(pc, labels) {
     console.log('creating answer');
     return pc.createAnswer().then(desc => {
+      store.commit('setAnswerCreated', true);
       // console.log('setting local description');
       pc.setLocalDescription(desc);
       // .then((desc) => {
@@ -173,7 +177,11 @@ export default class webRTCConnection {
       // });
       console.log('sending answer to signaling server');
       console.log(desc);
-      this.socket.emit('answer', JSON.stringify({ answer: desc }));
+      this.socket.emit(
+        'answer',
+        JSON.stringify({ answer: desc, mediaLabels: labels })
+      );
+      store.commit('setAnswerSent', true);
     });
   }
 

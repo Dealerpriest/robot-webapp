@@ -147,6 +147,9 @@ export default class clientConnector extends webRTCConnection {
       }
     };
 
+    //save stuff into this one to be used when we send answer later
+    let labelsAndIds = {};
+
     store.commit('clearLocalStreams');
     this.mediaConstraints = { audio: false, video: true };
     this.getLocalMedia(this.mediaConstraints).then(stream => {
@@ -155,6 +158,7 @@ export default class clientConnector extends webRTCConnection {
       let videoTracks = stream.getVideoTracks();
       if (videoTracks.length) {
         label = videoTracks[0].label;
+        labelsAndIds[stream.id] = label;
       }
       store.commit('addLocalStream', { label: label, stream: stream });
       this.addOutgoingStream(this.robotConnection, stream);
@@ -176,12 +180,14 @@ export default class clientConnector extends webRTCConnection {
         console.log(this.mediaLabels);
 
         if (msg.offer) {
+          store.commit('setOfferReceived', true);
           let offerHandlingResult = this.handleOfferOrAnswer(
             this.robotConnection,
             msg.offer
           ).then(() => {
+            store.commit('setOfferHandled', true);
             console.log('offer handled. Continuing to create answer');
-            return this.createAnswerAndSend(this.robotConnection);
+            return this.createAnswerAndSend(this.robotConnection, labelsAndIds);
             // return mediaPromise.then(createAnswerAndSend);
           });
           console.log(offerHandlingResult);

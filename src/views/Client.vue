@@ -11,7 +11,12 @@
         </v-flex>
       </transition>
       <v-flex>
-        <ConnectionStateIcon :isConnected="webRTC.isConnectedToSignalingServer" labelText="Socket to Signaling server: "></ConnectionStateIcon>
+        <ConnectionStateList>
+          <ConnectionStateListItem :isOkay="webRTC.isConnectedToSignalingServer" labelText="Socket to Signaling server: "></ConnectionStateListItem>
+          <ConnectionStateListItem :isOkay="webRTC.answerCreated" labelText="Answer created: "></ConnectionStateListItem>
+          <ConnectionStateListItem :isOkay="webRTC.answerSent" labelText="Answer sent: "></ConnectionStateListItem>
+          <ConnectionStateListItem :isOkay="webRTC.offerReceived" labelText="Offer received: "></ConnectionStateListItem>
+        </ConnectionStateList>
         <RobotControls></RobotControls>
         <v-container fluid>
           <v-layout row wrap>
@@ -47,7 +52,8 @@ import RobotVideo from '@/components/RobotVideo.vue';
 import RobotVideoMovable from '@/components/RobotVideoMovable.vue';
 import RobotControls from '@/components/RobotControls.vue';
 // import ServoControl from '@/components/ServoControl.vue';
-import ConnectionStateIcon from '@/components/ConnectionStateIcon.vue';
+import ConnectionStateListItem from '@/components/ConnectionStateListItem.vue';
+import ConnectionStateList from '@/components/ConnectionStateList.vue';
 import { mapState, mapMutations } from 'vuex';
 
 export default {
@@ -84,7 +90,8 @@ export default {
     RobotVideo,
     RobotVideoMovable,
     RobotControls,
-    ConnectionStateIcon
+    ConnectionStateListItem,
+    ConnectionStateList
     // ServoControl
   },
   data() {
