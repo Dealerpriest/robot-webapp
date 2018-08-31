@@ -2,6 +2,8 @@
   <v-app dark>
     <ConnectionStateList>
       <ConnectionStateListItem :isOkay="robot.isConnectedToWebsocketSerialServer" labelText="Socket to Serial server: "></ConnectionStateListItem>
+      <ConnectionStateListItem :isOkay="robot.BRIOIsFound" labelText="Found BRIO webcamera: "></ConnectionStateListItem>
+      <ConnectionStateListItem :isOkay="robot.RICOHIsFound" labelText="Found RICOH 360 camera: "></ConnectionStateListItem>
       <ConnectionStateListItem :isOkay="webRTC.isConnectedToSignalingServer" labelText="Socket to Signaling server: "></ConnectionStateListItem>
       <ConnectionStateListItem :isOkay="webRTC.offerCreated" labelText="Offer created: "></ConnectionStateListItem>
       <ConnectionStateListItem :isOkay="webRTC.offerSent" labelText="Offer sent: "></ConnectionStateListItem>
@@ -16,8 +18,14 @@
 </template>
 
 <script>
-const serverUrl = process.env.VUE_APP_SIGNALING_SERVER_URL;
+let serverUrl;
 const token = process.env.VUE_APP_ROBOT_TOKEN;
+
+if (process.env.NODE_ENV === 'development') {
+  serverUrl = window.location.hostname + ':' + process.env.VUE_APP_SIGNALING_SERVER_PORT;
+} else {
+  serverUrl = process.env.VUE_APP_SIGNALING_SERVER_URL;
+}
 
 // eslint-disable-next-line
 import robotConnector from '@/js/robotConnector.js';

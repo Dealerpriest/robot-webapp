@@ -5,11 +5,19 @@ Vue.use(Vuex);
 
 const robotModule = {
   state: {
-    isConnectedToWebsocketSerialServer: false
+    isConnectedToWebsocketSerialServer: false,
+    BRIOIsFound: false,
+    RICOHIsFound: false
   },
   mutations: {
     setWebsocketToSerialServerConnection(state, value) {
       state.isConnectedToWebsocketSerialServer = value;
+    },
+    setBRIOIsFound(state, isFound){
+      state.BRIOIsFound = isFound;
+    },
+    setRICOHIsFound(state, isFound){
+      state.RICOHIsFound = isFound;
     }
   }
 };
@@ -132,12 +140,18 @@ const webRTCModule = {
   }
 };
 
-const servoModule = {
+const clientRobotStateModule = {
   state: {
-    pitch: 90,
-    yaw: 90
+    targetState: {
+      pitch: 90,
+      yaw: 90
+    },
+    actualState: {}
   },
   mutations: {
+    setActualState(state, robotState){
+      state.actualState = Object.assign({}, robotState);
+    },
     setPitch(state, value) {
       state.pitch = value;
     },
@@ -176,8 +190,7 @@ export default new Vuex.Store({
     robot: robotModule,
     chat: chatModule,
     webRTC: webRTCModule,
-    servo: servoModule
-    // sockets: socketModule
+    clientRobotState: clientRobotStateModule
   },
   state: {},
   mutations: {},

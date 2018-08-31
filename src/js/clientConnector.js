@@ -33,7 +33,7 @@ export default class clientConnector extends webRTCConnection {
       if (dataChannel.label === 'chatChannel') {
         console.log('chatChannel added');
         dataChannel.onmessage = function(event) {
-          console.log('datachannel message received: ' + event.data);
+          console.log('chat datachannel message received: ' + event.data);
           // textReceiver.value = event.data;
         };
         // textReceiver.oninput = () => {
@@ -46,15 +46,22 @@ export default class clientConnector extends webRTCConnection {
         // };
       } else if (dataChannel.label === 'robotControlChannel') {
         console.log('robotControlChannel added');
+        dataChannel.onmessage = function(event) {
+          console.log('robotControl datachannel message received: ');
+          console.log(event.data);
+          if(event.data){
+            store.commit('setActualState', JSON.parse(event.data));
+          }
+        };
         store.subscribe((mutation, state) => {
           if (dataChannel.readyState === 'open') {
             //Handle servocontrol
-            if (
-              mutation.type === 'changePitch'
-              || mutation.type === 'changeYaw'
-            ) {
-              dataChannel.send(mutation.type + mutation.payload);
-            }
+            // if (
+            //   mutation.type === 'changePitch'
+            //   || mutation.type === 'changeYaw'
+            // ) {
+            //   dataChannel.send(mutation.type + mutation.payload);
+            // }
 
             //Handle keypresses
             if (mutation.type === 'setKeyState') {
@@ -85,6 +92,8 @@ export default class clientConnector extends webRTCConnection {
             }
           }
         });
+
+        // TODO: Lift out logic for handling keypresses. Only link clientConnector to store mutations
 
         let allowedKeys = [
           'ArrowLeft',

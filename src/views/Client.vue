@@ -115,8 +115,14 @@ export default {
     //     this.changeViewAngle();
     //   }
     // }
-    const serverUrl = process.env.VUE_APP_SIGNALING_SERVER_URL;
+    let serverUrl;
     const token = process.env.VUE_APP_CLIENT_TOKEN;
+
+    if (process.env.NODE_ENV === 'development') {
+      serverUrl = window.location.hostname + ':' + process.env.VUE_APP_SIGNALING_SERVER_PORT;
+    } else {
+      serverUrl = process.env.VUE_APP_SIGNALING_SERVER_URL;
+    }
     // eslint-disable-next-line
     const clientConnection = new clientConnector(serverUrl, token);
 

@@ -47,7 +47,7 @@ export default {
         this.changeYaw(-event.movementX / 8);
       }
     },
-    ...mapMutations(['changePitch', 'changeYaw'])
+    ...mapMutations(['setPitch', 'setYaw'])
   },
   mounted() {
     window.onmousemove = event => {

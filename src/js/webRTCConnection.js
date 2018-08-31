@@ -71,6 +71,25 @@ export default class webRTCConnection {
 
     pc.ontrack = this.handleRemoteTrackAdded;
 
+    pc.onconnectionstatechange = event => {
+      let importantLogStyle = 'background: #222; color: #bada55';
+      console.log('%c peerconnection state changed: ', importantLogStyle);
+      console.log(event);
+      console.log('state is: ' + pc.connectionState);
+      switch (pc.connectionState) {
+        case 'connected':
+          // The connection has become fully connected
+          break;
+        case 'disconnected':
+        case 'failed':
+          // One or more transports has terminated unexpectedly or in an error
+          break;
+        case 'closed':
+          // The connection has been closed
+          break;
+      }
+    };
+
     return pc;
   }
 

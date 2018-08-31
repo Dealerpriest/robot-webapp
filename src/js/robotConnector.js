@@ -51,8 +51,14 @@ export default class robotConnector extends webRTCConnection {
         if (
           deviceInfo.kind === 'videoinput'
           && deviceInfo.label
-          && this.deviceLabelsToInclude.some(subLabel => {
-            return deviceInfo.label.includes(subLabel);
+          && this.deviceLabelsToInclude.some(label => {
+            let matched = deviceInfo.label.includes(label);
+            if(matched && label == 'BRIO'){
+              store.commit('setBRIOIsFound', true);
+            }else if(matched && label === 'RICOH'){
+              store.commit('setRICOHIsFound', true);
+            }
+            return matched;
           })
         ) {
           console.log(
@@ -97,7 +103,7 @@ export default class robotConnector extends webRTCConnection {
       console.log('peers: ');
       console.log(this.peers);
 
-      console.log('adding datachannel');
+      console.log('adding chatRTCchannel');
       this.peers[id].chatChannel = this.addDataChannel(
         this.peers[id].pc,
         'chatChannel'
@@ -119,6 +125,7 @@ export default class robotConnector extends webRTCConnection {
       //   };
       // }
 
+      console.log('adding robotControlRTCchannel');
       this.peers[id].robotControlChannel = this.addDataChannel(
         this.peers[id].pc,
         'robotControlChannel'
@@ -134,8 +141,16 @@ export default class robotConnector extends webRTCConnection {
         // } else {
         //   serialSocket.emit('motorControl', command);
         // }
-        serialSocket.emit('robotControl', command);
+        serialSocket.emit('robotKeyboardControl', command);
       };
+
+      serialSocket.on('robotState', (data) => {
+        if (this.peers[id].robotControlChannel.readyState === 'open') {
+          console.log('received robotState:');
+          console.log(JSON.parse(data));
+          this.peers[id].robotControlChannel.send(data);
+        }
+      })
 
       // This is a hack to let the receiver end identify different mediadevices. Couldn't find any 'proper' way to do it.
       // So we here send the label and id pairs separately and pair them with their streams on the receiving end. Kind of ugly...
