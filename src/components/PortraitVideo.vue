@@ -1,6 +1,6 @@
 <template>
-  <!-- <div> -->
-    <!-- <a @click.prevent="addSource">add srcObject</a> -->
+  <!-- <div>
+    <a @click.prevent="addSource">add srcObject</a> -->
     
     <video ref="videoElement" autoplay>
     </video>
@@ -17,6 +17,9 @@ export default {
     return {};
   },
   methods: {
+    addSource() {
+      this.$refs.videoElement.srcObject = this.streamObject.stream;
+    }
   },
   mounted() {
     // console.log(this.$refs);
