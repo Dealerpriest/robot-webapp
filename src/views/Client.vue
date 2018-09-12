@@ -18,6 +18,7 @@
           <ConnectionStateListItem :isOkay="webRTC.offerReceived" labelText="Offer received: "></ConnectionStateListItem>
         </ConnectionStateList>
         <RobotControls></RobotControls>
+        <PortraitVideo class="self-portrait" v-if="selfPortraitStream" :stream-object="selfPortraitStream"></PortraitVideo>
         <v-container fluid>
           <v-layout row wrap>
             <v-flex sm6 xs12>
@@ -48,6 +49,7 @@ import firebase from 'firebase';
 import clientConnector from '@/js/clientConnector.js';
 
 import Chat from '@/components/Chat.vue';
+import PortraitVideo from '@/components/PortraitVideo.vue';
 import RobotVideo from '@/components/RobotVideo.vue';
 import RobotVideoMovable from '@/components/RobotVideoMovable.vue';
 import RobotControls from '@/components/RobotControls.vue';
@@ -69,6 +71,9 @@ export default {
         return streamObj.label.includes('BRIO');
       });
     },
+    selfPortraitStream() {
+      return this.webRTC.localStreams[0];
+    },
     remoteStreams() {
       return this.webRTC.remoteStreams;
     },
@@ -87,6 +92,7 @@ export default {
   },
   components: {
     Chat,
+    PortraitVideo,
     RobotVideo,
     RobotVideoMovable,
     RobotControls,
@@ -177,6 +183,14 @@ export default {
 
 #chat-drawer {
   min-width: 300px;
+}
+
+.self-portrait {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  width: 8vw;
+  height: auto;
 }
 
 .big-video {
