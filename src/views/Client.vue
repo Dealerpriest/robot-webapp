@@ -18,7 +18,7 @@
           <ConnectionStateListItem :isOkay="webRTC.offerReceived" labelText="Offer received: "></ConnectionStateListItem>
         </ConnectionStateList>
         <RobotControls></RobotControls>
-        <PortraitVideo class="self-portrait" v-if="selfPortraitStream" :stream-object="selfPortraitStream"></PortraitVideo>
+        <PortraitVideo class="self-portrait-video" v-if="selfPortraitStream" :stream-object="selfPortraitStream"></PortraitVideo>
         <v-container fluid>
           <v-layout row wrap>
             <v-flex sm6 xs12>
@@ -185,7 +185,7 @@ export default {
   min-width: 300px;
 }
 
-.self-portrait {
+.self-portrait-video {
   position: fixed;
   top: 20px;
   right: 20px;

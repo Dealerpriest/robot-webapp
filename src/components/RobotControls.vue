@@ -5,10 +5,10 @@
     <IconButton id="down-slot" icon="fas fa-caret-square-down" :active="keyStates.ArrowDown" keyName="ArrowDown"></IconButton>  
     <IconButton id="right-slot" icon="fas fa-caret-square-right" :active="keyStates.ArrowRight" keyName="ArrowRight"></IconButton>
 
-    <IconButton id="pan-up-slot" icon="fas fa-caret-square-up" :active="keyStates.h" keyName="h"></IconButton>
-    <IconButton id="pan-left-slot" icon="fas fa-caret-square-left" :active="keyStates.b" keyName="b"></IconButton>
-    <IconButton id="pan-down-slot" icon="fas fa-caret-square-down" :active="keyStates.n" keyName="n"></IconButton>
-    <IconButton id="pan-right-slot" icon="fas fa-caret-square-right" :active="keyStates.m" keyName="m"></IconButton>
+    <IconButton id="pan-up-slot" icon="fas fa-square" :active="keyStates.h" keyName="h" label="H"></IconButton>
+    <IconButton id="pan-left-slot" icon="fas fa-square" :active="keyStates.b" keyName="b"></IconButton>
+    <IconButton id="pan-down-slot" icon="fas fa-square" :active="keyStates.n" keyName="n"></IconButton>
+    <IconButton id="pan-right-slot" icon="fas fa-square" :active="keyStates.m" keyName="m"></IconButton>
   </div>
   <!-- <v-container class="keyboard-arrows" grid-list-sm> -->
     <!-- <v-layout row justify-center> -->
