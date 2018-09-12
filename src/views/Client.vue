@@ -29,7 +29,7 @@
               <div v-else class="big-video"><p>No BRIO stream acquired</p></div>
             </v-flex>
           </v-layout>
-          <v-layout row wrap>
+          <v-layout v-if="showAllRemoteStreams" row wrap>
             <v-flex v-for="stream in remoteStreams" :key="stream.label" md6 sm12>
               <RobotVideo class="big-video" :stream-object="stream" ></RobotVideo>
             </v-flex>
@@ -96,7 +96,8 @@ export default {
   },
   data() {
     return {
-      chat: false
+      chat: false,
+      showAllRemoteStreams: false
       // chatDrawerWidth: 200
       // viewAngle: 1
     };

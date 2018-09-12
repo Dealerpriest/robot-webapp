@@ -9,11 +9,11 @@
       <ConnectionStateListItem :isOkay="webRTC.offerSent" labelText="Offer sent: "></ConnectionStateListItem>
       <ConnectionStateListItem :isOkay="webRTC.answerReceived" labelText="Answer received: "></ConnectionStateListItem>
     </ConnectionStateList>
-    <v-container fluid fill-height>
-      <v-layout row>
-        <RobotVideo class="big-video" v-for="stream in remoteStreams" :stream-object="stream" :key="stream.label"></RobotVideo>
-      </v-layout>
-    </v-container>
+    <!-- <v-container fluid fill-height>
+      <v-layout row> -->
+        <PortraitVideo class="big-video" v-for="stream in remoteStreams" :stream-object="stream" :key="stream.label"></PortraitVideo>
+      <!-- </v-layout>
+    </v-container> -->
   </v-app>
 </template>
 
@@ -32,7 +32,7 @@ import robotConnector from '@/js/robotConnector.js';
 // eslint-disable-next-line
 const robotConnection = new robotConnector(serverUrl, token);
 
-import RobotVideo from '@/components/RobotVideo.vue';
+import PortraitVideo from '@/components/PortraitVideo.vue';
 import ConnectionStateListItem from '@/components/ConnectionStateListItem.vue';
 import ConnectionStateList from '@/components/ConnectionStateList.vue';
 import { mapState } from 'vuex';
@@ -68,10 +68,20 @@ export default {
     // document.head.appendChild(cameraScriptTag);
   },
   components: {
-    RobotVideo,
+    PortraitVideo,
     ConnectionStateListItem,
     ConnectionStateList
     // ServoControl
   }
 };
 </script>
+
+<style lang="scss" scoped>
+
+.big-video {
+  overflow: hiddden;
+  height: 100vh;
+  width: 100vw;
+}
+
+</style>

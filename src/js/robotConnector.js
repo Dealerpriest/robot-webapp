@@ -29,7 +29,7 @@ export default class robotConnector extends webRTCConnection {
     if (process.env.NODE_ENV === 'development') {
       this.deviceLabelsToInclude = ['webcam', 'Integrated', 'BRIO'];
     } else {
-      this.deviceLabelsToInclude = ['THETA', 'BRIO'];
+      this.deviceLabelsToInclude = ['THETA V FullHD', 'BRIO'];
     }
 
     this.peers = {};
@@ -55,7 +55,7 @@ export default class robotConnector extends webRTCConnection {
             let matched = deviceInfo.label.includes(label);
             if(matched && label == 'BRIO'){
               store.commit('setBRIOIsFound', true);
-            }else if(matched && label === 'RICOH'){
+            }else if(matched && label === 'THETA V FullHD'){
               store.commit('setRICOHIsFound', true);
             }
             return matched;

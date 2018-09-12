@@ -2,14 +2,14 @@
   <!-- <div> -->
     <!-- <a @click.prevent="addSource">add srcObject</a> -->
     
-    <video class="video-tag" ref="videoElement" autoplay>
+    <video ref="videoElement" autoplay>
     </video>
   <!-- </div> -->
 </template>
 
 <script>
 export default {
-  name: 'robotVideo',
+  name: 'portraitVideo',
   props: {
     streamObject: null
   },
@@ -17,12 +17,9 @@ export default {
     return {};
   },
   methods: {
-    addSource() {
-      this.$refs.videoElement.srcObject = this.streamObject.stream;
-    }
   },
   mounted() {
-    console.log(this.$refs);
+    // console.log(this.$refs);
     // this.$refs.videoElement.srcObject = this.streamObject.stream;
     this.$nextTick(() => {
       console.log('NEXT TIIIIIIICK!!!');
@@ -37,7 +34,7 @@ export default {
 video {
   // overflow: hidden;
   // width: 100%;
-  // height: auto;
+  // height: 100%;
 }
 </style>
 
