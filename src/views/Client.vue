@@ -26,7 +26,7 @@
               <div v-else class="big-video"><p>No THETA stream acquired</p></div>
             </v-flex>
             <v-flex sm6 xs12>
-              <RobotVideoMovable class="big-video" v-if="brioStream"  :stream-object="brioStream" key="brio-video"></RobotVideoMovable>
+              <RobotVideo class="big-video" v-if="brioStream"  :stream-object="brioStream" key="brio-video"></RobotVideo>
               <div v-else class="big-video"><p>No BRIO stream acquired</p></div>
             </v-flex>
           </v-layout>

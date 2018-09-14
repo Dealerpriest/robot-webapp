@@ -19,10 +19,14 @@ export default {
       dragStartX: 0,
       dragStartY: 0,
       dragDistanceX: 0,
-      dragDistanceY: 0
+      dragDistanceY: 0,
     };
   },
   methods: {
+    angleToCoordinate(fieldOfView, screenLength, angle){
+      let viewplaneDistance = (0.5 * screenLength) / Math.tan(0.5 * fieldOfView);
+      return Math.tan(angle) * viewplaneDistance - 0.5 * screenLength;
+    },
     addSource() {
       this.$refs.videoElement.srcObject = this.streamObject.stream;
     },
@@ -50,6 +54,7 @@ export default {
     ...mapMutations(['setPitch', 'setYaw'])
   },
   mounted() {
+    this.calculateViewplaneDistance();
     window.onmousemove = event => {
       if (this.isDragging) {
         this.updateDragDistance(event);

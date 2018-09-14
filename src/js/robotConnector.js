@@ -53,7 +53,9 @@ export default class robotConnector extends webRTCConnection {
           && deviceInfo.label
           && this.deviceLabelsToInclude.some(label => {
             let matched = deviceInfo.label.includes(label);
+            this.mediaConstraints.audio = false;
             if(matched && label == 'BRIO'){
+              this.mediaConstraints.audio = true;
               store.commit('setBRIOIsFound', true);
             }else if(matched && label === 'THETA V FullHD'){
               store.commit('setRICOHIsFound', true);
@@ -73,11 +75,16 @@ export default class robotConnector extends webRTCConnection {
               // height: { min: 1080, ideal: 2160, max: 2160 }
             }
           });
-          streamPromise.then(stream =>
+          streamPromise.then(async stream => {
+            await new Promise(r => setTimeout(r, 1000));
+            let videoTrack = stream.getVideoTracks()[0];
+            console.log("CAAAAAAAAAPABILITIES!!!");
+            console.log(videoTrack.getCapabilities());
             store.commit('addLocalStream', {
               label: deviceInfo.label,
               stream: stream
-            })
+            });
+          }
           );
           console.log(streamPromise);
           this.streamPromises.push({

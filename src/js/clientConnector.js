@@ -160,7 +160,7 @@ export default class clientConnector extends webRTCConnection {
     let labelsAndIds = {};
 
     store.commit('clearLocalStreams');
-    this.mediaConstraints = { audio: false, video: true };
+    this.mediaConstraints = { audio: true, video: true };
     this.getLocalMedia(this.mediaConstraints).then(stream => {
       //If we can't find a label, let's use the streamId as backup.
       let label = stream.id;

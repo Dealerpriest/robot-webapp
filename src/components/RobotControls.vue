@@ -6,9 +6,9 @@
     <IconButton id="right-slot" icon="fas fa-caret-square-right" :active="keyStates.ArrowRight" keyName="ArrowRight"></IconButton>
 
     <IconButton id="pan-up-slot" icon="fas fa-square" :active="keyStates.h" keyName="h" label="H"></IconButton>
-    <IconButton id="pan-left-slot" icon="fas fa-square" :active="keyStates.b" keyName="b"></IconButton>
-    <IconButton id="pan-down-slot" icon="fas fa-square" :active="keyStates.n" keyName="n"></IconButton>
-    <IconButton id="pan-right-slot" icon="fas fa-square" :active="keyStates.m" keyName="m"></IconButton>
+    <IconButton id="pan-left-slot" icon="fas fa-square" :active="keyStates.b" keyName="b" label="B"></IconButton>
+    <IconButton id="pan-down-slot" icon="fas fa-square" :active="keyStates.n" keyName="n" label="N"></IconButton>
+    <IconButton id="pan-right-slot" icon="fas fa-square" :active="keyStates.m" keyName="m" label="M"></IconButton>
   </div>
   <!-- <v-container class="keyboard-arrows" grid-list-sm> -->
     <!-- <v-layout row justify-center> -->
@@ -121,8 +121,12 @@ a {
 }
 
 .button-grid-container {
+  padding-left:5px;
+  padding-right:5px;
   display: grid;
   grid-gap: 5px;
+  align-items: center;
+  justify-items: center;
   grid-template-columns:repeat(7, 40px);
   grid-template-rows: repeat(2, 40px);
   grid-template-areas: 

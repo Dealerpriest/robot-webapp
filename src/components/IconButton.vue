@@ -1,8 +1,6 @@
 <template>
   <a :class="{'accent--text': active}" @mousedown="setKeyState(keyName)" @mouseup="unsetKeyState(keyName)" @mouseout="unsetKeyState(keyName)">
-    <div style="position:absolute; left: 50%;">
-      <span class="button-label" v-if="label">{{label}}</span>
-    </div>
+    <span class="button-label" v-if="label">{{label}}</span>
     <v-icon large style="color: inherit;">{{icon}}</v-icon>
   </a>
 </template>
@@ -33,12 +31,19 @@ a {
   color: inherit;
 }
 
+// .button-label{
+//   position: relative; 
+//   // left: 50%; 
+//   // top: 50%
+// }
+
 .button-label {
   font-weight:bold;
   color: black;
-  position: relative;
-  left: -50%;
-  // right: -50%;
+  position: absolute;
+  left: 50%; 
+  top: 50%;
+  transform: translate(-50%, -50%);
 }
 </style>
 
