@@ -1,15 +1,24 @@
 <template>
-  <!-- <div> -->
-    <!-- <a @click.prevent="addSource">add srcObject</a> -->
-      <video ref="videoElement" @mousedown="startDrag" autoplay>
-      </video>
-  <!-- </div> -->
+  <div class="video-container">
+    <div style="z-index: 1000;" class="settings-list">
+      <template v-for="(capability, key) in streamObject.metaData.capabilities">
+        <label v-if="capability.step" :key="key">
+          {{key}}:{{streamObject.metaData.settings[key]}}
+          <input @input="cameraSettingChanged(key, $event)" value="100" type="range" :max="capability.max" :min="capability.min" :step="capability.step"/>
+          <br />
+        </label>
+      </template>
+    </div>
+    <!-- <v-icon class="crosshair" large style="color: inherit;">my_location</v-icon> -->
+    <video ref="videoElement" @mousedown="startDrag" autoplay>
+    </video>
+  </div>
 </template>
 
 <script>
 import { mapMutations } from 'vuex';
 export default {
-  name: 'robotVideoMovable',
+  name: 'brioVideo',
   props: {
     streamObject: null
   },
@@ -19,7 +28,7 @@ export default {
       dragStartX: 0,
       dragStartY: 0,
       dragDistanceX: 0,
-      dragDistanceY: 0,
+      dragDistanceY: 0
     };
   },
   methods: {
@@ -31,9 +40,10 @@ export default {
       this.$refs.videoElement.srcObject = this.streamObject.stream;
     },
     startDrag(event) {
-      this.isDragging = true;
-      this.dragStartX = event.clientX;
-      this.dragStartY = event.clientY;
+      event.s = null;
+      // this.isDragging = true;
+      // this.dragStartX = event.clientX;
+      // this.dragStartY = event.clientY;
     },
     updateDragDistance(event) {
       this.dragDistanceX = event.clientX - this.dragStartX;
@@ -51,10 +61,13 @@ export default {
         this.changeYaw(-event.movementX / 8);
       }
     },
-    ...mapMutations(['setPitch', 'setYaw'])
+    cameraSettingChanged(key, e){
+      this.changeRemoteCameraSetting({streamObject: this.streamObject, key: key, newSetting: e.target.value});
+    },
+    ...mapMutations(['setPitch', 'setYaw', 'changeRemoteCameraSetting'])
   },
   mounted() {
-    this.calculateViewplaneDistance();
+    // this.calculateViewplaneDistance();
     window.onmousemove = event => {
       if (this.isDragging) {
         this.updateDragDistance(event);
@@ -78,6 +91,21 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.video-container {
+  position: relative;
+}
+
+.settings-list {
+  position: absolute;
+}
+
+.crosshair {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
 video {
   cursor: pointer;
   // overflow: hidden;

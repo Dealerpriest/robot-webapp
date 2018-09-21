@@ -63,32 +63,47 @@ export default class clientConnector extends webRTCConnection {
             //   dataChannel.send(mutation.type + mutation.payload);
             // }
 
-            //Handle keypresses
-            if (mutation.type === 'setKeyState') {
-              dataChannel.send(mutation.payload);
+            
+            switch (mutation.type) {
+              case 'setKeyState': {
+                console.log('datachannel sending:');
+                console.log(mutation);
+                dataChannel.send(JSON.stringify(mutation));
 
-              let sendStamp = null;
-              let keyUpdate = timestamp => {
-                if (!sendStamp) sendStamp = timestamp;
-                let progress = timestamp - sendStamp;
-                if (
-                  progress > 100
-                  && state.webRTC.keyStates[mutation.payload]
-                ) {
-                  console.log('datachannel sending: ' + mutation.payload);
-                  dataChannel.send(mutation.payload);
-                  sendStamp = timestamp;
-                }
+                let sendStamp = null;
+                let keyUpdate = timestamp => {
+                  if (!sendStamp) sendStamp = timestamp;
+                  let progress = timestamp - sendStamp;
+                  if (
+                    progress > 100
+                    && state.webRTC.keyStates[mutation.payload]
+                  ) {
+                    console.log('datachannel sending:');
+                    console.log(mutation);
+                    dataChannel.send(JSON.stringify(mutation));
+                    sendStamp = timestamp;
+                  }
 
-                if (state.webRTC.keyStates[mutation.payload]) {
-                  window.requestAnimationFrame(keyUpdate);
-                }
-              };
-              window.requestAnimationFrame(keyUpdate);
-            } else if (mutation.type === 'unsetKeyState') {
-              let msg = '!' + mutation.payload;
-              console.log('datachannel sending: ' + msg);
-              dataChannel.send(msg);
+                  if (state.webRTC.keyStates[mutation.payload]) {
+                    window.requestAnimationFrame(keyUpdate);
+                  }
+                };
+                window.requestAnimationFrame(keyUpdate);
+                break;
+              }
+              case 'unsetKeyState':{
+                // let msg = '!' + mutation.payload;
+                console.log('datachannel sending:');
+                console.log(mutation);
+                dataChannel.send(JSON.stringify(mutation));
+                break;
+              }
+              case 'changeRemoteCameraSetting':{
+                console.log('datachannel sending:');
+                console.log(mutation);
+                dataChannel.send(JSON.stringify(mutation));
+                break;
+              }
             }
           }
         });
@@ -157,20 +172,31 @@ export default class clientConnector extends webRTCConnection {
     };
 
     //save stuff into this one to be used when we send answer later
-    let labelsAndIds = {};
+    // let streamMetaData = {};
 
     store.commit('clearLocalStreams');
     this.mediaConstraints = { audio: true, video: true };
     this.getLocalMedia(this.mediaConstraints).then(stream => {
-      //If we can't find a label, let's use the streamId as backup.
-      let label = stream.id;
-      let videoTracks = stream.getVideoTracks();
-      if (videoTracks.length) {
-        label = videoTracks[0].label;
-        labelsAndIds[stream.id] = label;
-      }
-      store.commit('addLocalStream', { label: label, stream: stream });
-      this.addOutgoingStream(this.robotConnection, stream);
+      setTimeout(() => {
+        let videoTrack = stream.getVideoTracks()[0];
+        let label = videoTrack.label;
+        let capabilities = videoTrack.getCapabilities();
+        console.log('-------------capabilities----------');
+        console.log(capabilities);
+        let settings = videoTrack.getSettings();
+        let metaData = {
+          label: label,
+          capabilities: capabilities,
+          settings: settings
+        };
+        let streamWithMetaData = {
+          metaData: metaData,
+          stream: stream
+        }
+        this.localStreamsMetaData[stream.id] = metaData;
+        store.commit('addLocalStream', streamWithMetaData);
+        this.addOutgoingStream(this.robotConnection, stream);
+      }, 200);
     });
 
     this.socket.on('robotConnected', () => {
@@ -181,12 +207,13 @@ export default class clientConnector extends webRTCConnection {
       store.commit('clearRemoteStreams');
       // el.innerHTML = 'RTC offer message: ' + data;
       let msg;
+      // if ((msg = this.necromancer.resurrect(data))) {
       if ((msg = JSON.parse(data))) {
         console.log('RTC offer message: ');
         console.log(msg);
 
-        this.mediaLabels = msg.mediaLabels;
-        console.log(this.mediaLabels);
+        this.remoteStreamsMetaData = msg.streamsMetaData;
+        // console.log(this.mediaLabels);
 
         if (msg.offer) {
           store.commit('setOfferReceived', true);
@@ -196,7 +223,7 @@ export default class clientConnector extends webRTCConnection {
           ).then(() => {
             store.commit('setOfferHandled', true);
             console.log('offer handled. Continuing to create answer');
-            return this.createAnswerAndSend(this.robotConnection, labelsAndIds);
+            return this.createAnswerAndSend(this.robotConnection, this.localStreamsMetaData);
             // return mediaPromise.then(createAnswerAndSend);
           });
           console.log(offerHandlingResult);

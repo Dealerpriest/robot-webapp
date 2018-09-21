@@ -2,7 +2,11 @@
   <!-- <div>
     <a @click.prevent="addSource">add srcObject</a> -->
     
-    <video ref="videoElement" autoplay>
+    <!-- This is a weird hack because the muted property has to be set on initial render in browsers. Adding the property won't have any effect -->
+    <!-- https://github.com/vuejs/vue/issues/2042 -->
+    <video v-if="isMuted" ref="videoElement" muted autoplay>
+    </video>
+    <video v-else ref="videoElement" autoplay>
     </video>
   <!-- </div> -->
 </template>
@@ -11,21 +15,23 @@
 export default {
   name: 'portraitVideo',
   props: {
-    streamObject: null
+    streamObject: null,
+    isMuted: null
   },
   data() {
-    return {};
+    return {
+    };
   },
   methods: {
-    addSource() {
-      this.$refs.videoElement.srcObject = this.streamObject.stream;
-    }
+    // addSource() {
+    //   this.$refs.videoElement.srcObject = this.streamObject.stream;
+    // }
   },
   mounted() {
     // console.log(this.$refs);
     // this.$refs.videoElement.srcObject = this.streamObject.stream;
     this.$nextTick(() => {
-      console.log('NEXT TIIIIIIICK!!!');
+      // console.log('NEXT TIIIIIIICK!!!');
       // document.getElementById('video-tag').srcObject = this.streamObject.stream;
       this.$refs.videoElement.srcObject = this.streamObject.stream;
     });

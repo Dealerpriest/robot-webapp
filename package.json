@@ -17,6 +17,7 @@
     "@fortawesome/fontawesome-free-solid": "^5.0.13",
     "firebase": "^4.11.0",
     "material-design-icons-iconfont": "^3.0.3",
+    "resurrect.js": "^1.0.3",
     "socket.io-client": "^2.0.4",
     "vue": "^2.5.13",
     "vue-router": "^3.0.1",
@@ -27,7 +28,7 @@
     "@vue/cli-plugin-babel": "^3.0.0-beta.5",
     "@vue/cli-plugin-eslint": "^3.0.0-beta.5",
     "@vue/cli-service": "latest",
-    "node-sass": "^4.7.2",
+    "node-sass": "^4.9.3",
     "prettier-eslint": "^8.8.1",
     "sass-loader": "^6.0.7",
     "vue-template-compiler": "^2.5.13"

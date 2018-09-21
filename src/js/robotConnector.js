@@ -55,7 +55,7 @@ export default class robotConnector extends webRTCConnection {
             let matched = deviceInfo.label.includes(label);
             this.mediaConstraints.audio = false;
             if(matched && label == 'BRIO'){
-              this.mediaConstraints.audio = true;
+              this.mediaConstraints.audio = false;
               store.commit('setBRIOIsFound', true);
             }else if(matched && label === 'THETA V FullHD'){
               store.commit('setRICOHIsFound', true);
@@ -75,22 +75,34 @@ export default class robotConnector extends webRTCConnection {
               // height: { min: 1080, ideal: 2160, max: 2160 }
             }
           });
-          streamPromise.then(async stream => {
-            await new Promise(r => setTimeout(r, 1000));
-            let videoTrack = stream.getVideoTracks()[0];
-            console.log("CAAAAAAAAAPABILITIES!!!");
-            console.log(videoTrack.getCapabilities());
-            store.commit('addLocalStream', {
-              label: deviceInfo.label,
-              stream: stream
+          // let streamWithMetaDataPromise = new Promise((resolve, reject) =>{
+          //   streamPromise.then((stream => {return resolve(stream);}))
+          //   .catch(err => reject(err));
+          // })
+          let streamWithMetaDataPromise = streamPromise.then(stream=>{
+            let p = new Promise((resolve) => {
+              setTimeout(() => {
+                let videoTrack = stream.getVideoTracks()[0];
+                let capabilities = videoTrack.getCapabilities();
+                // console.log('-------------capabilities----------');
+                // console.log(capabilities);
+                let settings = videoTrack.getSettings();
+                let streamWithMetaData = {
+                  metaData:{
+                    label: deviceInfo.label,
+                    capabilities: capabilities,
+                    settings: settings
+                  },
+                  stream: stream
+                }
+                store.commit('addLocalStream', streamWithMetaData);
+                resolve(streamWithMetaData);
+              }, 200);
             });
-          }
-          );
-          console.log(streamPromise);
-          this.streamPromises.push({
-            streamPromise: streamPromise,
-            label: deviceInfo.label
-          });
+            return p;
+          }).catch(err=>{return err});
+          
+          this.streamPromises.push(streamWithMetaDataPromise);
         }
       });
     });
@@ -138,8 +150,16 @@ export default class robotConnector extends webRTCConnection {
         'robotControlChannel'
       );
       this.peers[id].robotControlChannel.onmessage = event => {
-        let command = event.data;
-        console.log('robotControlChannel message received: ' + command);
+        let command = JSON.parse(event.data);
+        console.log('robotControlChannel message received: ')
+        console.log(command);
+        if(command.type == 'setKeyState'){
+          serialSocket.emit('robotKeyboardControl', command.payload)
+        }else if( command.type == 'unsetKeyState'){
+          serialSocket.emit('robotKeyboardControl', "!" + command.payload)
+        }else if(command.type == 'changeRemoteCameraSetting'){
+          store.commit('changeLocalCameraSetting', command.payload);
+        }
         // if (
         //   command.startsWith('changePitch')
         //   || command.startsWith('changeYaw')
@@ -148,7 +168,7 @@ export default class robotConnector extends webRTCConnection {
         // } else {
         //   serialSocket.emit('motorControl', command);
         // }
-        serialSocket.emit('robotKeyboardControl', command);
+        // serialSocket.emit('robotKeyboardControl', command);
       };
 
       serialSocket.on('robotState', (data) => {
@@ -161,21 +181,21 @@ export default class robotConnector extends webRTCConnection {
 
       // This is a hack to let the receiver end identify different mediadevices. Couldn't find any 'proper' way to do it.
       // So we here send the label and id pairs separately and pair them with their streams on the receiving end. Kind of ugly...
-      let labelsAndIds = {};
+      // let streamMetaData = {};
 
       // let streamPromises = [];
-      this.streamPromises.forEach(({ streamPromise, label }) => {
-        streamPromise.then(stream => {
-          console.log('adding mediadevice to stream: ' + label);
-          labelsAndIds[stream.id] = label;
+      this.streamPromises.forEach((streamWithMetaDataPromise) => {
+        streamWithMetaDataPromise.then(({stream, metaData}) => {
+          console.log('adding mediadevice to stream: ' + metaData.label);
+          this.localStreamsMetaData[stream.id] = metaData;
           this.addOutgoingStream(this.peers[id].pc, stream);
         });
       });
       Promise.all(
-        this.streamPromises.map(p => p.streamPromise.catch(e => console.log(e)))
+        this.streamPromises.map(p => p.catch(e => console.log(e)))
       )
         .then(() =>
-          this.createOfferAndSend(this.peers[id].pc, id, labelsAndIds)
+          this.createOfferAndSend(this.peers[id].pc, id, this.localStreamsMetaData)
         )
         .catch(e => console.log(e));
     });
@@ -206,8 +226,8 @@ export default class robotConnector extends webRTCConnection {
       if ((msg = JSON.parse(data))) {
         console.log('RTC answer message: ');
         console.log(msg);
-        if (msg.fromSocketId && msg.answer && msg.mediaLabels) {
-          this.mediaLabels = msg.mediaLabels;
+        if (msg.fromSocketId && msg.answer && msg.streamsMetaData) {
+          this.remoteStreamsMetaData = msg.streamsMetaData;
           console.log(this.mediaLabels);
           store.commit('setAnswerReceived', true);
           let handleAnswerResult = this.handleOfferOrAnswer(

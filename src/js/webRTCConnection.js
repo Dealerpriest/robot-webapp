@@ -1,6 +1,15 @@
 import store from '@/store';
+// import resurrect from 'resurrect.js';
+// import Hydrate from 'hydrate';
 
 import io from 'socket.io-client';
+
+// default stringify won't handle interface stuff inside prototype.
+// Let's make it understand MediaSettingsRange.
+MediaSettingsRange.prototype.toJSON = function(){
+  return {max: this.max, min: this.min, step: this.step};
+};
+
 export default class webRTCConnection {
   constructor(
     serverUrl,
@@ -28,6 +37,9 @@ export default class webRTCConnection {
     this.localVideoPool = localVideoContainer;
     this.remoteVideoPool = remoteVideoContainer;
 
+    // this.necromancer = new resurrect();
+    // this.hydrater = new Hydrate();
+
     // TODO: keep turn server user in an .env file so that we at least doesn't share it on github.
     this.pcConfig = {
       iceServers: [
@@ -41,7 +53,8 @@ export default class webRTCConnection {
     };
     this.localStream;
     this.remoteStream;
-    this.mediaLabels = {};
+    this.remoteStreamsMetaData = {};
+    this.localStreamsMetaData = {};
 
     this.readyForIce = false;
     this.iceQueue = [];
@@ -101,15 +114,22 @@ export default class webRTCConnection {
     console.log('Remote track added. Event: ', event);
     // this.remoteStream = event.stream;
     // console.log(this.remoteStream.getTracks());
-    console.log(this.mediaLabels);
-    console.log(event.streams[0].id);
-    let remoteStream = {};
-    if (this.mediaLabels[event.streams[0].id]) {
-      console.log('matching received stream with presaved label.');
-      remoteStream['label'] = this.mediaLabels[event.streams[0].id];
+    // console.log(this.mediaLabels);
+    console.log('stream id: ' + event.streams[0].id);
+    console.log("tracks in incoming stream: ");
+    console.log(event.streams[0].getTracks());
+    if(store.state.webRTC.remoteStreams.some(elem => elem.stream === event.streams[0])){
+      console.log('stream already added to remotestreams array. Not adding again!');
+      return;
+    }
+
+    let remoteStream = {stream: null, metaData: {}};
+    if (this.remoteStreamsMetaData[event.streams[0].id]) {
+      console.log('matching received stream with presaved metaData: ' + this.remoteStreamsMetaData[event.streams[0].id]);
+      remoteStream['metaData'] = this.remoteStreamsMetaData[event.streams[0].id];
     } else {
-      console.log('no label presaved for this stream. Using id as label.');
-      remoteStream['label'] = event.streams[0].id;
+      console.log('no metaData presaved for this stream. Using id as label: ' + event.streams[0].id);
+      remoteStream['metaData']['label'] = event.streams[0].id;
     }
 
     remoteStream['stream'] = event.streams[0];
@@ -142,6 +162,10 @@ export default class webRTCConnection {
     console.log('adding outgoing stream:');
     console.log(stream);
     stream.getTracks().forEach(track => {
+      // if(track.kind != "video"){
+      //   console.log('not videotrack. Skipping');
+      //   return;
+      // }
       // console.log('track: ');
       // console.log(track);
       // let caps = track.getCapabilities();
@@ -157,7 +181,7 @@ export default class webRTCConnection {
   }
 
   //returns a promise that resolves if the offer was created and sent to the signal server.
-  createOfferAndSend(pc, targetSocketId, labels) {
+  createOfferAndSend(pc, targetSocketId, streamsMetaData) {
     console.log('creating offer');
     // console.log(pc);
     return pc.createOffer().then(desc => {
@@ -171,20 +195,35 @@ export default class webRTCConnection {
       // });
       console.log('sending offer to signaling server');
       console.log(desc);
+
+      // console.log('hydration test:');
+      // let testString = this.hydrater.stringify({value: null, test: 1234, yaw: 'test'});
+      // console.log(this.hydrater.parse(testString));
+
+      // let msg = this.necromancer.stringify({
+      //   targetSocketId: targetSocketId,
+      //   offer: desc,
+      //   streamsMetaData: streamsMetaData
+      // });
+
+      // console.log(this.necromancer.resurrect(msg));
+      let msg = JSON.stringify({
+        targetSocketId: targetSocketId,
+        offer: desc,
+        streamsMetaData: streamsMetaData
+      });
+      // console.log('--------------------------TESTING toJSON modification----------');
+      // console.log(JSON.parse(msg));
       this.socket.emit(
         'offer',
-        JSON.stringify({
-          targetSocketId: targetSocketId,
-          offer: desc,
-          mediaLabels: labels
-        })
+        msg
       );
       store.commit('setOfferSent', true);
     });
   }
 
   //returns a promise that resolves if the answer was created and sent to the signal server.
-  createAnswerAndSend(pc, labels) {
+  createAnswerAndSend(pc, streamsMetaData) {
     console.log('creating answer');
     return pc.createAnswer().then(desc => {
       store.commit('setAnswerCreated', true);
@@ -198,7 +237,8 @@ export default class webRTCConnection {
       console.log(desc);
       this.socket.emit(
         'answer',
-        JSON.stringify({ answer: desc, mediaLabels: labels })
+        JSON.stringify({ answer: desc, streamsMetaData: streamsMetaData })
+        // this.necromancer.stringify({ answer: desc, streamsMetaData: streamsMetaData })
       );
       store.commit('setAnswerSent', true);
     });

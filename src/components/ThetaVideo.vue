@@ -9,7 +9,7 @@
 
 <script>
 export default {
-  name: 'robotVideo',
+  name: 'thetaVideo',
   props: {
     streamObject: null
   },
@@ -25,7 +25,7 @@ export default {
     console.log(this.$refs);
     // this.$refs.videoElement.srcObject = this.streamObject.stream;
     this.$nextTick(() => {
-      console.log('NEXT TIIIIIIICK!!!');
+      // console.log('NEXT TIIIIIIICK!!!');
       // document.getElementById('video-tag').srcObject = this.streamObject.stream;
       this.$refs.videoElement.srcObject = this.streamObject.stream;
     });

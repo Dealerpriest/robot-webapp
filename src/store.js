@@ -136,6 +136,34 @@ const webRTCModule = {
     },
     unsetKeyState(state, key) {
       state.keyStates[key] = false;
+    },
+    ///TODO: Always use stream id to connect data between local and remote streams!!!!
+    changeLocalCameraSetting(state, payload){
+      let index = state.localStreams.findIndex((element) => {
+        // console.log(element);
+        //TODO: THIIIIIIIIIS IS NOT GOOD. Verifiying equality with label. Aaaaargh!!!! USE some kind of ID!!!!
+        return element.metaData.label == payload.streamObject.metaData.label;
+      });
+      if(index < 0)
+      {
+        console.error("mutation failed. ChangeRemoteCameraSetting");
+        return;
+      }
+      state.localStreams[index].metaData.settings[payload.key] = payload.newSetting;
+    },
+    changeRemoteCameraSetting(state, payload){
+      let index = state.remoteStreams.findIndex((element) => {
+        // console.log(element);
+        return element == payload.streamObject;
+      });
+      if(index < 0)
+      {
+        console.error("mutation failed. ChangeRemoteCameraSetting");
+        return;
+      }
+      // console.log(state.remoteStreams[index].metaData.settings[payload.key]);
+      
+      state.remoteStreams[index].metaData.settings[payload.key] = payload.newSetting;
     }
   }
 };

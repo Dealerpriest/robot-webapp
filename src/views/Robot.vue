@@ -52,6 +52,25 @@ export default {
   // computed: mapState(['serialSocket']),
   // methods: mapMutations(['setSerialSocket']),
   created() {
+    // es-lint-disable-line
+    this.$store.subscribe((mutation)=>{
+      if(mutation.type == 'changeLocalCameraSetting'){
+        let index = this.webRTC.localStreams.findIndex((element) => {
+          // console.log(element);
+          //TODO: THIIIIIIIIIS IS NOT GOOD. Verifiying equality with label. Aaaaargh!!!! USE some kind of ID!!!!
+          return element.metaData.label == mutation.payload.streamObject.metaData.label;
+        });
+        if(index < 0)
+        {
+          console.error("mutation failed. ChangeRemoteCameraSetting");
+          return;
+        }
+        let videoTrack = this.webRTC.localStreams[index].stream.getVideoTracks()[0];
+        let setting = {};
+        setting[mutation.payload.key] = mutation.payload.newSetting;
+        videoTrack.applyConstraints({advanced: [ setting ]})
+      }
+    });
     // let socket = io('http://localhost:3000', {
     //   query: {
     //     token: process.env.VUE_APP_ROBOT_TOKEN

@@ -18,21 +18,21 @@
           <ConnectionStateListItem :isOkay="webRTC.offerReceived" labelText="Offer received: "></ConnectionStateListItem>
         </ConnectionStateList>
         <RobotControls></RobotControls>
-        <PortraitVideo class="self-portrait-video" v-if="selfPortraitStream" :stream-object="selfPortraitStream"></PortraitVideo>
+        <PortraitVideo class="self-portrait-video" v-if="selfPortraitStream" :stream-object="selfPortraitStream" :isMuted="true"></PortraitVideo>
         <v-container fluid>
           <v-layout row wrap>
             <v-flex sm6 xs12>
-              <RobotVideo class="big-video" v-if="thetaStream"  :stream-object="thetaStream" key="theta-video"></RobotVideo>
+              <ThetaVideo class="big-video" v-if="thetaStream"  :stream-object="thetaStream" key="theta-video"></ThetaVideo>
               <div v-else class="big-video"><p>No THETA stream acquired</p></div>
             </v-flex>
             <v-flex sm6 xs12>
-              <RobotVideo class="big-video" v-if="brioStream"  :stream-object="brioStream" key="brio-video"></RobotVideo>
+              <BrioVideo class="big-video" v-if="brioStream"  :stream-object="brioStream" key="brio-video"></BrioVideo>
               <div v-else class="big-video"><p>No BRIO stream acquired</p></div>
             </v-flex>
           </v-layout>
           <v-layout v-if="showAllRemoteStreams" row wrap>
             <v-flex v-for="stream in remoteStreams" :key="stream.label" md6 sm12>
-              <RobotVideo class="big-video" :stream-object="stream" ></RobotVideo>
+              <Video class="big-video" :stream-object="stream" ></Video>
             </v-flex>
           </v-layout>
         </v-container>
@@ -50,8 +50,9 @@ import clientConnector from '@/js/clientConnector.js';
 
 import Chat from '@/components/Chat.vue';
 import PortraitVideo from '@/components/PortraitVideo.vue';
-import RobotVideo from '@/components/RobotVideo.vue';
-import RobotVideoMovable from '@/components/RobotVideoMovable.vue';
+import ThetaVideo from '@/components/ThetaVideo.vue';
+import BrioVideo from '@/components/BrioVideo.vue';
+import Video from '@/components/Video.vue'
 import RobotControls from '@/components/RobotControls.vue';
 // import ServoControl from '@/components/ServoControl.vue';
 import ConnectionStateListItem from '@/components/ConnectionStateListItem.vue';
@@ -63,12 +64,12 @@ export default {
   computed: {
     thetaStream() {
       return this.webRTC.remoteStreams.find(streamObj => {
-        return streamObj.label.includes('THETA');
+        return streamObj.metaData.label.includes('THETA');
       });
     },
     brioStream() {
       return this.webRTC.remoteStreams.find(streamObj => {
-        return streamObj.label.includes('BRIO');
+        return streamObj.metaData.label.includes('BRIO');
       });
     },
     selfPortraitStream() {
@@ -79,7 +80,7 @@ export default {
     },
     ...mapState({
       user: state => state.client.userState,
-      webRTC: state => state.webRTC
+      webRTC: state => state.webRTC,
     })
   },
   methods: {
@@ -88,13 +89,14 @@ export default {
     //   this.viewAngle++;
     //   this.viewAngle%=3;
     // },
-    ...mapMutations(['setUserId', 'setUserName'])
+    ...mapMutations(['setUserId', 'setUserName', 'changeRemoteCameraSettings'])
   },
   components: {
     Chat,
     PortraitVideo,
-    RobotVideo,
-    RobotVideoMovable,
+    Video,
+    ThetaVideo,
+    BrioVideo,
     RobotControls,
     ConnectionStateListItem,
     ConnectionStateList
