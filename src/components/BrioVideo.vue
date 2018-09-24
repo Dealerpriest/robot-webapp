@@ -1,13 +1,29 @@
 <template>
   <div class="video-container">
+    
     <div style="z-index: 1000;" class="settings-list">
-      <template v-for="(capability, key) in streamObject.metaData.capabilities">
+      <v-slider class="zoom-control"
+            v-model="zoom"
+            :max="streamObject.metaData.capabilities.zoom.max" 
+            :min="streamObject.metaData.capabilities.zoom.min" 
+            :step="streamObject.metaData.capabilities.zoom.step"
+            append-icon="zoom_in"
+            prepend-icon="zoom_out"
+          ></v-slider>
+      <!-- <template v-for="(capability, key) in streamObject.metaData.capabilities">
         <label v-if="capability.step" :key="key">
           {{key}}:{{streamObject.metaData.settings[key]}}
           <input @input="cameraSettingChanged(key, $event)" value="100" type="range" :max="capability.max" :min="capability.min" :step="capability.step"/>
           <br />
         </label>
-      </template>
+      </template> -->
+      
+      <!-- <template v-if="streamObject.metaData.capabilities.zoom">
+        <label>
+          ZOOM: 
+          <input @input="cameraSettingChanged('zoom', $event)" value="streamObject.metaData.settings.zoom" type="range" :max="streamObject.metaData.capabilities.zoom.max" :min="streamObject.metaData.capabilities.zoom.min" :step="streamObject.metaData.capabilities.zoom.step"/>
+        </label>
+      </template> -->
     </div>
     <!-- <v-icon class="crosshair" large style="color: inherit;">my_location</v-icon> -->
     <video ref="videoElement" @mousedown="startDrag" autoplay>
@@ -30,6 +46,16 @@ export default {
       dragDistanceX: 0,
       dragDistanceY: 0
     };
+  },
+  computed: {
+    zoom: {
+      get () {
+        return this.streamObject.metaData.settings.zoom;
+      },
+      set (value) {
+        this.changeRemoteCameraSetting({streamObject: this.streamObject, key: 'zoom', newSetting: Number(value)});
+      }
+    }
   },
   methods: {
     angleToCoordinate(fieldOfView, screenLength, angle){
@@ -62,7 +88,7 @@ export default {
       }
     },
     cameraSettingChanged(key, e){
-      this.changeRemoteCameraSetting({streamObject: this.streamObject, key: key, newSetting: e.target.value});
+      this.changeRemoteCameraSetting({streamObject: this.streamObject, key: key, newSetting: Number(e.target.value)});
     },
     ...mapMutations(['setPitch', 'setYaw', 'changeRemoteCameraSetting'])
   },
@@ -97,6 +123,11 @@ export default {
 
 .settings-list {
   position: absolute;
+  width: 500px;
+}
+
+.zoom-control {
+  // width: 400px;
 }
 
 .crosshair {
