@@ -55,7 +55,7 @@ export default class robotConnector extends webRTCConnection {
             let matched = deviceInfo.label.includes(label);
             this.mediaConstraints.audio = false;
             if(matched && label == 'BRIO'){
-              this.mediaConstraints.audio = false;
+              this.mediaConstraints.audio = true;
               store.commit('setBRIOIsFound', true);
             }else if(matched && label === 'THETA V FullHD'){
               store.commit('setRICOHIsFound', true);

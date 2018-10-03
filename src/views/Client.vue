@@ -18,7 +18,7 @@
           <ConnectionStateListItem :isOkay="webRTC.offerReceived" labelText="Offer received: "></ConnectionStateListItem>
         </ConnectionStateList>
         <RobotControls></RobotControls>
-        <PortraitVideo class="self-portrait-video" v-if="selfPortraitStream" :stream-object="selfPortraitStream" :isMuted="true"></PortraitVideo>
+        <PortraitVideo style="z-index: 1000" class="self-portrait-video" v-if="selfPortraitStream" :stream-object="selfPortraitStream" :isMuted="true"></PortraitVideo>
         <v-container fluid>
           <v-layout row wrap>
             <v-flex sm6 xs12>
