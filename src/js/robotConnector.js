@@ -27,7 +27,7 @@ export default class robotConnector extends webRTCConnection {
     this.deviceLabelsToInclude = [];
 
     if (process.env.NODE_ENV === 'development') {
-      this.deviceLabelsToInclude = ['webcam', 'Integrated', 'BRIO'];
+      this.deviceLabelsToInclude = ['BRIO', 'THETA V FullHD'];
     } else {
       this.deviceLabelsToInclude = ['THETA V FullHD', 'BRIO'];
     }

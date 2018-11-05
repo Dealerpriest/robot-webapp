@@ -2,14 +2,12 @@
   <div class="video-container">
     
     <div style="z-index: 1000;" class="settings-list">
-      <v-slider class="zoom-control"
+      <!-- <v-slider class="zoom-control"
             v-model="zoom"
             :max="streamObject.metaData.capabilities.zoom.max" 
             :min="streamObject.metaData.capabilities.zoom.min" 
             :step="streamObject.metaData.capabilities.zoom.step"
-            append-icon="zoom_in"
-            prepend-icon="zoom_out"
-          ></v-slider>
+          ></v-slider> -->
       <!-- <template v-for="(capability, key) in streamObject.metaData.capabilities">
         <label v-if="capability.step" :key="key">
           {{key}}:{{streamObject.metaData.settings[key]}}
@@ -44,20 +42,30 @@ export default {
       dragStartX: 0,
       dragStartY: 0,
       dragDistanceX: 0,
-      dragDistanceY: 0
+      dragDistanceY: 0,
+      zoom: 1
     };
   },
   computed: {
-    zoom: {
-      get () {
-        return this.streamObject.metaData.settings.zoom;
-      },
-      set (value) {
-        this.changeRemoteCameraSetting({streamObject: this.streamObject, key: 'zoom', newSetting: Number(value)});
-      }
+    // zoom: {
+    //   get () {
+    //     return this.streamObject.metaData.settings.zoom;
+    //   },
+    //   set (value) {
+    //     this.changeRemoteCameraSetting({streamObject: this.streamObject, key: 'zoom', newSetting: Number(value)});
+    //   }
+    // }
+    width() {
+      return this.boundingRect().width;
+    },
+    height() {
+      return this.boundingRect().height;
     }
   },
   methods: {
+    boundingRect(){
+      return this.$refs.videoElement.getBoundingClientRect().width;
+    },
     angleToCoordinate(fieldOfView, screenLength, angle){
       let viewplaneDistance = (0.5 * screenLength) / Math.tan(0.5 * fieldOfView);
       return Math.tan(angle) * viewplaneDistance - 0.5 * screenLength;
@@ -67,9 +75,9 @@ export default {
     },
     startDrag(event) {
       event.s = null;
-      // this.isDragging = true;
-      // this.dragStartX = event.clientX;
-      // this.dragStartY = event.clientY;
+      this.isDragging = true;
+      this.dragStartX = event.clientX;
+      this.dragStartY = event.clientY;
     },
     updateDragDistance(event) {
       this.dragDistanceX = event.clientX - this.dragStartX;
