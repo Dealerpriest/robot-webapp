@@ -8,23 +8,27 @@
 </template>
 
 <script>
+import pixelToAngleUtility from '@/js/pixelToAngleUtility.js';
+
 export default {
   name: 'thetaVideo',
   props: {
-    streamObject: null
+    streamObject: null,
   },
   data() {
-    return {};
+    return {
+      pixUtil: new pixelToAngleUtility(),
+    };
   },
   methods: {
     addSource() {
       this.$refs.videoElement.srcObject = this.streamObject.stream;
     },
-    // eslint-disable-next-line
     videoClicked(event) {
       console.log("Video clicked");
-      console.log(event.layerX);
-      console.log(event.layerY);
+      let newTarget = this.pixUtil.coordinatesToAngleDistance(event.layerX, event.layerY, this.$refs.videoElement.clientWidth, this.$refs.videoElement.clientHeight);
+      console.log(newTarget.distance);
+      console.log(newTarget.angle);
     }
   },
   mounted() {
