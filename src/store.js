@@ -61,7 +61,11 @@ const webRTCModule = {
     answerReceived: false,
     localStreams: [],
     remoteStreams: [],
-    keyStates: {}
+    keyStates: {},
+    latestClickTarget: {
+      angle: 0,
+      distance: 0
+    }
   },
   mutations: {
     // eslint-disable-next-line
@@ -80,7 +84,10 @@ const webRTCModule = {
         localStreams: [],
         remoteStreams: [],
         keyStates: {},
-        newClickTarget: {}
+        latestClickTarget: {
+          angle: 0,
+          distance: 0
+        }
       };
     },
     setSignalingServerConnection(state, active) {
@@ -165,6 +172,10 @@ const webRTCModule = {
       // console.log(state.remoteStreams[index].metaData.settings[payload.key]);
       
       state.remoteStreams[index].metaData.settings[payload.key] = payload.newSetting;
+    },
+    setClickTarget(state, payload){
+      state.latestClickTarget.angle = payload.angle;
+      state.latestClickTarget.distance = payload.distance;
     }
   }
 };

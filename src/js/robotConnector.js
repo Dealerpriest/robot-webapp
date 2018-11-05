@@ -159,6 +159,8 @@ export default class robotConnector extends webRTCConnection {
           serialSocket.emit('robotKeyboardControl', "!" + command.payload)
         }else if(command.type == 'changeRemoteCameraSetting'){
           store.commit('changeLocalCameraSetting', command.payload);
+        }else if(command.type == 'setClickTarget', command.payload){
+          serialSocket.emit('clickToDrive', command.payload);
         }
         // if (
         //   command.startsWith('changePitch')

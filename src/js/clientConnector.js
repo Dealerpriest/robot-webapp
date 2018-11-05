@@ -104,7 +104,7 @@ export default class clientConnector extends webRTCConnection {
                 dataChannel.send(JSON.stringify(mutation));
                 break;
               }
-              case 'newClickTarget':{
+              case 'setClickTarget':{
                 console.log('datachannel sending:');
                 console.log(mutation);
                 dataChannel.send(JSON.stringify(mutation));
