@@ -24,7 +24,7 @@
       </template> -->
     </div>
     <!-- <v-icon class="crosshair" large style="color: inherit;">my_location</v-icon> -->
-    <video ref="videoElement" @mousedown="startDrag" autoplay>
+    <video ref="videoElement" @click="videoClicked" @mousedown="startDrag" autoplay>
     </video>
   </div>
 </template>
@@ -55,17 +55,8 @@ export default {
     //     this.changeRemoteCameraSetting({streamObject: this.streamObject, key: 'zoom', newSetting: Number(value)});
     //   }
     // }
-    width() {
-      return this.boundingRect().width;
-    },
-    height() {
-      return this.boundingRect().height;
-    }
   },
   methods: {
-    boundingRect(){
-      return this.$refs.videoElement.getBoundingClientRect().width;
-    },
     angleToCoordinate(fieldOfView, screenLength, angle){
       let viewplaneDistance = (0.5 * screenLength) / Math.tan(0.5 * fieldOfView);
       return Math.tan(angle) * viewplaneDistance - 0.5 * screenLength;
@@ -73,7 +64,13 @@ export default {
     addSource() {
       this.$refs.videoElement.srcObject = this.streamObject.stream;
     },
+    videoClicked(event){
+      console.log(event.clientX);
+      console.log(event.clientY);
+      console.log(event);
+    },
     startDrag(event) {
+      // this.boundingRect();
       event.s = null;
       this.isDragging = true;
       this.dragStartX = event.clientX;
