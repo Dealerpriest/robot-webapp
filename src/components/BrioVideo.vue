@@ -31,6 +31,7 @@
 
 <script>
 import { mapMutations } from 'vuex';
+import pixelToAngleUtility from '@/js/webRTCConnection.js';
 export default {
   name: 'brioVideo',
   props: {
@@ -57,17 +58,12 @@ export default {
     // }
   },
   methods: {
-    angleToCoordinate(fieldOfView, screenLength, angle){
-      let viewplaneDistance = (0.5 * screenLength) / Math.tan(0.5 * fieldOfView);
-      return Math.tan(angle) * viewplaneDistance - 0.5 * screenLength;
-    },
     addSource() {
       this.$refs.videoElement.srcObject = this.streamObject.stream;
     },
     videoClicked(event){
-      console.log(event.clientX);
-      console.log(event.clientY);
-      console.log(event);
+      console.log(event.layerX);
+      console.log(event.layerY);
     },
     startDrag(event) {
       // this.boundingRect();
