@@ -79,7 +79,8 @@ const webRTCModule = {
         answerHandled: false,
         localStreams: [],
         remoteStreams: [],
-        keyStates: {}
+        keyStates: {},
+        newClickTarget: {}
       };
     },
     setSignalingServerConnection(state, active) {

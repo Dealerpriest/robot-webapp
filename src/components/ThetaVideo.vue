@@ -2,7 +2,7 @@
   <!-- <div> -->
     <!-- <a @click.prevent="addSource">add srcObject</a> -->
     
-    <video class="video-tag" ref="videoElement" autoplay>
+    <video class="video-tag" ref="videoElement" autoplay v-on:click="videoClicked">
     </video>
   <!-- </div> -->
 </template>
@@ -19,6 +19,12 @@ export default {
   methods: {
     addSource() {
       this.$refs.videoElement.srcObject = this.streamObject.stream;
+    },
+    // eslint-disable-next-line
+    videoClicked(event) {
+      console.log("Video clicked");
+      console.log(event.layerX);
+      console.log(event.layerY);
     }
   },
   mounted() {

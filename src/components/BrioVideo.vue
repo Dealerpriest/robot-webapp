@@ -31,6 +31,7 @@
 
 <script>
 import { mapMutations } from 'vuex';
+// eslint-disable-next-line
 import pixelToAngleUtility from '@/js/webRTCConnection.js';
 export default {
   name: 'brioVideo',
