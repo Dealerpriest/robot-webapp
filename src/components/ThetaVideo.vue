@@ -9,6 +9,7 @@
 
 <script>
 import pixelToAngleUtility from '@/js/pixelToAngleUtility.js';
+import { mapMutations} from 'vuex';
 
 export default {
   name: 'thetaVideo',
@@ -27,9 +28,11 @@ export default {
     videoClicked(event) {
       console.log("Video clicked");
       let newTarget = this.pixUtil.coordinatesToAngleDistance(event.layerX, event.layerY, this.$refs.videoElement.clientWidth, this.$refs.videoElement.clientHeight);
-      console.log(newTarget.distance);
-      console.log(newTarget.angle);
-    }
+      console.log("angle: " + newTarget.angle);
+      console.log("distance: " + newTarget.distance);
+      this.setClickTarget(newTarget);
+    },
+    ...mapMutations(['setClickTarget'])
   },
   mounted() {
     console.log(this.$refs);
