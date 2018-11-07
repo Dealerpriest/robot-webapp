@@ -26,6 +26,12 @@ export default class pixelToAngleUtility {
         distance = 9999;
     }
     
+    // don't drive if the click is close to the bottom
+    if(distance < 1)
+    {
+      distance = 0;
+    }
+
     //log("vAngle:"+vertAngle);
     console.log(" hAngle:"+Math.round(horAngle));
     console.log(" distance:"+Math.round(distance));
