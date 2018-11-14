@@ -11,12 +11,15 @@
         </v-flex>
       </transition>
       <v-flex>
-        <ConnectionStateList>
-          <ConnectionStateListItem :isOkay="webRTC.isConnectedToSignalingServer" labelText="Socket to Signaling server: "></ConnectionStateListItem>
-          <ConnectionStateListItem :isOkay="webRTC.answerCreated" labelText="Answer created: "></ConnectionStateListItem>
-          <ConnectionStateListItem :isOkay="webRTC.answerSent" labelText="Answer sent: "></ConnectionStateListItem>
-          <ConnectionStateListItem :isOkay="webRTC.offerReceived" labelText="Offer received: "></ConnectionStateListItem>
-        </ConnectionStateList>
+        <div id="overlay">
+          <ConnectionStateList>
+            <ConnectionStateListItem :isOkay="webRTC.isConnectedToSignalingServer" labelText="Socket to Signaling server: "></ConnectionStateListItem>
+            <ConnectionStateListItem :isOkay="webRTC.answerCreated" labelText="Answer created: "></ConnectionStateListItem>
+            <ConnectionStateListItem :isOkay="webRTC.answerSent" labelText="Answer sent: "></ConnectionStateListItem>
+            <ConnectionStateListItem :isOkay="webRTC.offerReceived" labelText="Offer received: "></ConnectionStateListItem>
+          </ConnectionStateList>
+          <DebugBox></DebugBox>
+        </div>
         <RobotControls></RobotControls>
         <PortraitVideo style="z-index: 1000" class="self-portrait-video" v-if="selfPortraitStream" :stream-object="selfPortraitStream" :isMuted="true"></PortraitVideo>
         <v-container fluid>
@@ -52,11 +55,12 @@ import Chat from '@/components/Chat.vue';
 import PortraitVideo from '@/components/PortraitVideo.vue';
 import ThetaVideo from '@/components/ThetaVideo.vue';
 import BrioVideo from '@/components/BrioVideo.vue';
-import Video from '@/components/Video.vue'
+import Video from '@/components/Video.vue';
 import RobotControls from '@/components/RobotControls.vue';
 // import ServoControl from '@/components/ServoControl.vue';
 import ConnectionStateListItem from '@/components/ConnectionStateListItem.vue';
 import ConnectionStateList from '@/components/ConnectionStateList.vue';
+import DebugBox from '@/components/DebugBox.vue';
 import { mapState, mapMutations } from 'vuex';
 
 export default {
@@ -80,7 +84,7 @@ export default {
     },
     ...mapState({
       user: state => state.client.userState,
-      webRTC: state => state.webRTC,
+      webRTC: state => state.webRTC
     })
   },
   methods: {
@@ -89,7 +93,16 @@ export default {
     //   this.viewAngle++;
     //   this.viewAngle%=3;
     // },
-    ...mapMutations(['setUserId', 'setUserName', 'changeRemoteCameraSettings'])
+    rotate(angle) {
+      let target = { angle: angle, distance: 0 };
+      this.setClickTarget(target);
+    },
+    ...mapMutations([
+      'setUserId',
+      'setUserName',
+      'changeRemoteCameraSettings',
+      'setClickTarget'
+    ])
   },
   components: {
     Chat,
@@ -99,7 +112,8 @@ export default {
     BrioVideo,
     RobotControls,
     ConnectionStateListItem,
-    ConnectionStateList
+    ConnectionStateList,
+    DebugBox
     // ServoControl
   },
   data() {
@@ -128,7 +142,10 @@ export default {
     const token = process.env.VUE_APP_CLIENT_TOKEN;
 
     if (process.env.NODE_ENV === 'development') {
-      serverUrl = window.location.hostname + ':' + process.env.VUE_APP_SIGNALING_SERVER_PORT;
+      serverUrl
+        = window.location.hostname
+        + ':'
+        + process.env.VUE_APP_SIGNALING_SERVER_PORT;
     } else {
       serverUrl = process.env.VUE_APP_SIGNALING_SERVER_URL;
     }
@@ -205,5 +222,13 @@ export default {
   // margin: 100px;
   // left: 0;
   // top: 0;
+}
+
+#overlay {
+  z-index: 2000;
+  position: fixed;
+  left: 20px;
+  bottom: 20px;
+  background-color: rgba(0, 0, 0, 0.35);
 }
 </style>
