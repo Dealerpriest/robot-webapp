@@ -16,17 +16,23 @@
       <v-btn @click="rotate(-720)">-720</v-btn>
       <v-btn @click="rotate(-1080)">-1080</v-btn>
     </div>
+    <pre>{{robotState}}</pre>
   </div>
 </template>
 
 <script>
-import { mapMutations } from 'vuex';
+import { mapMutations, mapState } from 'vuex';
 export default {
   name: 'debugBox',
   data() {
     return {
       show: false
     };
+  },
+  computed() {
+    mapState([
+      'clientRobotState'
+    ])
   },
   methods: {
     rotate(angle) {
