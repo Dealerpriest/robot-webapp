@@ -15,12 +15,12 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.connection-state-list {
-  z-index: 2000;
-  position: fixed;
-  left: 20px;
-  top: 20px;
-  background-color: rgba(0, 0, 0, 0.35);
-}
+// .connection-state-list {
+//   z-index: 2000;
+//   position: fixed;
+//   left: 20px;
+//   top: 20px;
+//   background-color: rgba(0, 0, 0, 0.35);
+// }
 </style>
 

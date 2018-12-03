@@ -47,7 +47,7 @@ export default {
     remoteStreams() {
       return this.webRTC.remoteStreams;
     },
-    ...mapState(['user', 'webRTC', 'robot'])
+    ...mapState(['webRTC', 'robot'])
   },
   // computed: mapState(['serialSocket']),
   // methods: mapMutations(['setSerialSocket']),

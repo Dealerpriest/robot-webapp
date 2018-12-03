@@ -49,6 +49,7 @@ video {
   // overflow: hidden;
   // width: 100%;
   // height: auto;
+  cursor: pointer;
 }
 </style>
 

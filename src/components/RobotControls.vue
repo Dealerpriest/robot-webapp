@@ -88,50 +88,50 @@ a {
   // width: 170px;
 }
 
-#up-slot{
+#up-slot {
   grid-area: up;
 }
 
-#left-slot{
+#left-slot {
   grid-area: left;
 }
 
-#right-slot{
+#right-slot {
   grid-area: right;
 }
 
-#down-slot{
+#down-slot {
   grid-area: down;
 }
 
-#pan-up-slot{
+#pan-up-slot {
   grid-area: pan-up;
 }
 
-#pan-left-slot{
+#pan-left-slot {
   grid-area: pan-left;
 }
 
-#pan-right-slot{
+#pan-right-slot {
   grid-area: pan-right;
 }
 
-#pan-down-slot{
+#pan-down-slot {
   grid-area: pan-down;
 }
 
 .button-grid-container {
-  padding-left:5px;
-  padding-right:5px;
+  padding-left: 5px;
+  padding-right: 5px;
   display: grid;
   grid-gap: 5px;
   align-items: center;
   justify-items: center;
-  grid-template-columns:repeat(7, 40px);
+  grid-template-columns: repeat(7, 40px);
   grid-template-rows: repeat(2, 40px);
-  grid-template-areas: 
-    ".          pan-up    .          .  .     up    ."
-    "pan-left   pan-down  pan-right  .  left  down  right"
+  grid-template-areas:
+    '.          pan-up    .          .  .     up    .'
+    'pan-left   pan-down  pan-right  .  left  down  right';
 }
 
 .highlighted {
