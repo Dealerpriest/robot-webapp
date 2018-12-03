@@ -16,7 +16,7 @@
       <v-btn @click="rotate(-720)">-720</v-btn>
       <v-btn @click="rotate(-1080)">-1080</v-btn>
     </div>
-    <pre>{{robotState}}</pre>
+    <pre v-if="showRobotState"><code>{{JSON.stringify(clientRobotState, undefined, 2)}}</code></pre>
   </div>
 </template>
 
@@ -26,11 +26,12 @@ export default {
   name: 'debugBox',
   data() {
     return {
-      show: false
+      show: false,
+      showRobotState: false
     };
   },
-  computed() {
-    mapState([
+  computed: {
+    ...mapState([
       'clientRobotState'
     ])
   },
@@ -47,6 +48,8 @@ export default {
     document.addEventListener('keydown', (e) => {
       if (e.key == 'd') {
         this.show = !this.show;
+      }else if (e.key == 't') {
+        this.showRobotState = !this.showRobotState;
       }
     });
   }
