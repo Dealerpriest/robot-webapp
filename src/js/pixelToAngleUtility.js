@@ -1,6 +1,6 @@
 export default class pixelToAngleUtility {
 
-  constructor(cameraHeight = 1.6, FovXDegrees = 360, fovYDegress = 180){
+  constructor(cameraHeight = 1.49, FovXDegrees = 360, fovYDegress = 180){
     this.cameraHeight = cameraHeight; // how high is the camera lens above ground?
     this.fovXDegress = FovXDegrees; // how many degrees does the camera see up-down?
     this.fovYDegress = fovYDegress; // how many degrees is does the camera see left-right?
