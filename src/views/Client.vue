@@ -12,12 +12,6 @@
       </transition>
       <v-flex>
         <div id="overlay">
-          <ConnectionStateList>
-            <ConnectionStateListItem :isOkay="webRTC.isConnectedToSignalingServer" labelText="Socket to Signaling server: "></ConnectionStateListItem>
-            <ConnectionStateListItem :isOkay="webRTC.answerCreated" labelText="Answer created: "></ConnectionStateListItem>
-            <ConnectionStateListItem :isOkay="webRTC.answerSent" labelText="Answer sent: "></ConnectionStateListItem>
-            <ConnectionStateListItem :isOkay="webRTC.offerReceived" labelText="Offer received: "></ConnectionStateListItem>
-          </ConnectionStateList>
           <DebugBox></DebugBox>
         </div>
         <RobotControls></RobotControls>
@@ -58,8 +52,6 @@ import BrioVideo from '@/components/BrioVideo.vue';
 import Video from '@/components/Video.vue';
 import RobotControls from '@/components/RobotControls.vue';
 // import ServoControl from '@/components/ServoControl.vue';
-import ConnectionStateListItem from '@/components/ConnectionStateListItem.vue';
-import ConnectionStateList from '@/components/ConnectionStateList.vue';
 import DebugBox from '@/components/DebugBox.vue';
 import { mapState, mapMutations } from 'vuex';
 
@@ -111,8 +103,6 @@ export default {
     ThetaVideo,
     BrioVideo,
     RobotControls,
-    ConnectionStateListItem,
-    ConnectionStateList,
     DebugBox
     // ServoControl
   },
