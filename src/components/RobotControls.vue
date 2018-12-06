@@ -1,6 +1,8 @@
 <template>
   <div class="button-grid-container keyboard-arrows">
-    <IconButton id="up-slot" icon="fas fa-caret-square-up" :active="keyStates.ArrowUp" keyName="ArrowUp" ></IconButton>  
+    
+    <IconButton slot="activator" id="up-slot" icon="fas fa-caret-square-up" :active="keyStates.ArrowUp" keyName="ArrowUp" ></IconButton>
+    
     <IconButton id="left-slot" icon="fas fa-caret-square-left" :active="keyStates.ArrowLeft" keyName="ArrowLeft"></IconButton>  
     <IconButton id="down-slot" icon="fas fa-caret-square-down" :active="keyStates.ArrowDown" keyName="ArrowDown"></IconButton>  
     <IconButton id="right-slot" icon="fas fa-caret-square-right" :active="keyStates.ArrowRight" keyName="ArrowRight"></IconButton>

@@ -21,6 +21,7 @@
           <DebugBox></DebugBox>
         </div>
         <RobotControls></RobotControls>
+        <!-- <ButtonStrip></ButtonStrip> -->
         <PortraitVideo style="z-index: 1000" class="self-portrait-video" v-if="selfPortraitStream" :stream-object="selfPortraitStream" :isMuted="true"></PortraitVideo>
         <v-container fluid>
           <v-layout row wrap>
@@ -57,6 +58,7 @@ import ThetaVideo from '@/components/ThetaVideo.vue';
 import BrioVideo from '@/components/BrioVideo.vue';
 import Video from '@/components/Video.vue';
 import RobotControls from '@/components/RobotControls.vue';
+import ButtonStrip from '@/components/ButtonStrip.vue';
 // import ServoControl from '@/components/ServoControl.vue';
 import ConnectionStateListItem from '@/components/ConnectionStateListItem.vue';
 import ConnectionStateList from '@/components/ConnectionStateList.vue';
@@ -111,6 +113,7 @@ export default {
     ThetaVideo,
     BrioVideo,
     RobotControls,
+    ButtonStrip,
     ConnectionStateListItem,
     ConnectionStateList,
     DebugBox

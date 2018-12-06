@@ -1,8 +1,11 @@
 <template>
-  <a :class="{'accent--text': active}" @mousedown="setKeyState(keyName)" @mouseup="unsetKeyState(keyName)" @mouseout="unsetKeyState(keyName)">
-    <span class="button-label" v-if="label">{{label}}</span>
-    <v-icon large style="color: inherit;">{{icon}}</v-icon>
-  </a>
+  <v-tooltip top>
+    <a slot="activator" :class="{'accent--text': active}" @mousedown="setKeyState(keyName)" @mouseup="unsetKeyState(keyName)" @mouseout="unsetKeyState(keyName)">
+      <span class="button-label" v-if="label">{{label}}</span>
+      <v-icon large style="color: inherit;">{{icon}}</v-icon>
+    </a>
+    <span>{{label}}</span>
+  </v-tooltip>
 </template>
 
 <script>
