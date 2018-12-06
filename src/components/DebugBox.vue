@@ -1,5 +1,11 @@
 <template>
   <div v-if="show" class="debug-box">
+    <ConnectionStateList>
+      <ConnectionStateListItem :isOkay="webRTC.isConnectedToSignalingServer" labelText="Socket to Signaling server: "></ConnectionStateListItem>
+      <ConnectionStateListItem :isOkay="webRTC.answerCreated" labelText="Answer created: "></ConnectionStateListItem>
+      <ConnectionStateListItem :isOkay="webRTC.answerSent" labelText="Answer sent: "></ConnectionStateListItem>
+      <ConnectionStateListItem :isOkay="webRTC.offerReceived" labelText="Offer received: "></ConnectionStateListItem>
+    </ConnectionStateList>
     <div>
       <v-btn @click="rotate(45)">+45</v-btn>
       <v-btn @click="rotate(90)">+90</v-btn>
@@ -22,6 +28,8 @@
 
 <script>
 import { mapMutations, mapState } from 'vuex';
+import ConnectionStateListItem from '@/components/ConnectionStateListItem.vue';
+import ConnectionStateList from '@/components/ConnectionStateList.vue';
 export default {
   name: 'debugBox',
   data() {
@@ -31,9 +39,10 @@ export default {
     };
   },
   computed: {
-    ...mapState([
-      'clientRobotState'
-    ])
+    ...mapState({
+      clientRobotState: state => state.clientRobotState,
+      webRTC: state => state.webRTC
+    })
   },
   methods: {
     rotate(angle) {
@@ -43,6 +52,10 @@ export default {
     ...mapMutations([
       'setClickTarget'
     ])
+  },
+  components: {
+    ConnectionStateListItem,
+    ConnectionStateList
   },
   created(){
     document.addEventListener('keydown', (e) => {

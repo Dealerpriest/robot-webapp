@@ -12,24 +12,17 @@
       </transition>
       <v-flex>
         <div id="overlay">
-          <ConnectionStateList>
-            <ConnectionStateListItem :isOkay="webRTC.isConnectedToSignalingServer" labelText="Socket to Signaling server: "></ConnectionStateListItem>
-            <ConnectionStateListItem :isOkay="webRTC.answerCreated" labelText="Answer created: "></ConnectionStateListItem>
-            <ConnectionStateListItem :isOkay="webRTC.answerSent" labelText="Answer sent: "></ConnectionStateListItem>
-            <ConnectionStateListItem :isOkay="webRTC.offerReceived" labelText="Offer received: "></ConnectionStateListItem>
-          </ConnectionStateList>
           <DebugBox></DebugBox>
         </div>
         <RobotControls></RobotControls>
-        <!-- <ButtonStrip></ButtonStrip> -->
         <PortraitVideo style="z-index: 1000" class="self-portrait-video" v-if="selfPortraitStream" :stream-object="selfPortraitStream" :isMuted="true"></PortraitVideo>
         <v-container fluid>
           <v-layout row wrap>
-            <v-flex sm6 xs12>
+            <v-flex v-bind:class="{ sm6: cameraMode==0, sm10:cameraMode==1, sm2:cameraMode==2 }" xs12 >
               <ThetaVideo class="big-video" v-if="thetaStream"  :stream-object="thetaStream" key="theta-video"></ThetaVideo>
               <div v-else class="big-video"><p>No THETA stream acquired</p></div>
             </v-flex>
-            <v-flex sm6 xs12>
+            <v-flex v-bind:class="{ sm6: cameraMode==0, sm2:cameraMode==1, sm10:cameraMode==2 }" xs12>
               <BrioVideo class="big-video" v-if="brioStream"  :stream-object="brioStream" key="brio-video"></BrioVideo>
               <div v-else class="big-video"><p>No BRIO stream acquired</p></div>
             </v-flex>
@@ -58,10 +51,7 @@ import ThetaVideo from '@/components/ThetaVideo.vue';
 import BrioVideo from '@/components/BrioVideo.vue';
 import Video from '@/components/Video.vue';
 import RobotControls from '@/components/RobotControls.vue';
-import ButtonStrip from '@/components/ButtonStrip.vue';
 // import ServoControl from '@/components/ServoControl.vue';
-import ConnectionStateListItem from '@/components/ConnectionStateListItem.vue';
-import ConnectionStateList from '@/components/ConnectionStateList.vue';
 import DebugBox from '@/components/DebugBox.vue';
 import { mapState, mapMutations } from 'vuex';
 
@@ -113,16 +103,14 @@ export default {
     ThetaVideo,
     BrioVideo,
     RobotControls,
-    ButtonStrip,
-    ConnectionStateListItem,
-    ConnectionStateList,
     DebugBox
     // ServoControl
   },
   data() {
     return {
       chat: false,
-      showAllRemoteStreams: false
+      showAllRemoteStreams: false,
+      cameraMode: 0
       // chatDrawerWidth: 200
       // viewAngle: 1
     };
@@ -178,6 +166,17 @@ export default {
         this.setUserName(user.displayName);
       }
     });
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key == 'c') {
+        this.cameraMode++;
+        if (this.cameraMode >= 3)
+        {
+          this.cameraMode = 0;
+        }
+      }
+    });
+
   }
 };
 </script>
