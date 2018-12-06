@@ -1,9 +1,10 @@
 export default class pixelToAngleUtility {
 
-  constructor(cameraHeight = 1.49, FovXDegrees = 360, fovYDegress = 180){
+  constructor(cameraHeight = 1.49, fovXDegrees = 360, fovYDegrees = 180, fovXStartsAt = 90){
     this.cameraHeight = cameraHeight; // how high is the camera lens above ground?
-    this.fovXDegress = FovXDegrees; // how many degrees does the camera see up-down?
-    this.fovYDegress = fovYDegress; // how many degrees is does the camera see left-right?
+    this.fovXDegrees = fovXDegrees; // how many degrees does the camera see up-down?
+    this.fovYDegrees = fovYDegrees; // how many degrees is does the camera see left-right?
+    this.fovXStartsAt = fovXStartsAt; // how many degrees is the angle of the highest row of pixels?
   }
 
   static angleToCoordinate( angle,  screenLength, fieldOfView){
@@ -11,14 +12,17 @@ export default class pixelToAngleUtility {
     return Math.tan(angle) * viewplaneDistance - 0.5 * screenLength;
   }
 
+
   coordinatesToAngleDistance(posX, posY, video_width, video_height) {
     // vertAngle is the angle in the vertical plane, 
     // where 0 is looking to the horizon, -90 is looking at your feet 
     // and 90 is looking straight up at the sky
-    let vertAngle = ((video_height - posY) - (video_height/2)) / (video_height / this.fovYDegress);
+    
+    let vertAngle = this.fovXStartsAt - (posY * (this.fovYDegrees / video_height))
+    
     // horAngle is the angle in the horizontal plane that we should rotate towards
     // 0 is forward, 90 is right, 180 is backwards, -90 is left
-    let horAngle = (posX-video_width/2) / video_width * this.fovXDegress
+    let horAngle = (posX-video_width/2) / video_width * this.fovXDegrees
 
     let distance = this.cameraHeight * Math.tan((90+vertAngle) * (Math.PI/180));
     if(vertAngle >= 0) {
@@ -32,9 +36,9 @@ export default class pixelToAngleUtility {
       distance = 0;
     }
 
-    //log("vAngle:"+vertAngle);
-    console.log(" hAngle:"+Math.round(horAngle));
-    console.log(" distance:"+Math.round(distance));
+    console.log("coordinatesToAngleDistance vAngle:"+vertAngle);
+    console.log("coordinatesToAngleDistance hAngle:"+Math.round(horAngle));
+    console.log("coordinatesToAngleDistance distance:"+Math.round(distance));
     return {'angle':horAngle, distance};
   }
 }
