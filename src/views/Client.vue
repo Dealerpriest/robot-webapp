@@ -18,11 +18,11 @@
         <PortraitVideo style="z-index: 1000" class="self-portrait-video" v-if="selfPortraitStream" :stream-object="selfPortraitStream" :isMuted="true"></PortraitVideo>
         <v-container fluid>
           <v-layout row wrap>
-            <v-flex v-bind:class="{ sm6: cameraMode==0, sm10:cameraMode==1, sm2:cameraMode==2 }" xs12 >
-              <ThetaVideo class="big-video" v-if="thetaStream"  :stream-object="thetaStream" key="theta-video"></ThetaVideo>
+            <v-flex v-bind:class="{ sm6: cameraMode==0, sm12:cameraMode==1, sm2:cameraMode==2 }" class="no-overflow" xs12 >
+              <ThetaVideo class="big-video hide-roof" v-if="thetaStream"  :stream-object="thetaStream" key="theta-video"></ThetaVideo>
               <div v-else class="big-video"><p>No THETA stream acquired</p></div>
             </v-flex>
-            <v-flex v-bind:class="{ sm6: cameraMode==0, sm2:cameraMode==1, sm10:cameraMode==2 }" xs12>
+            <v-flex v-bind:class="{ sm6: cameraMode==0, sm2:cameraMode==1, sm12:cameraMode==2 }" xs12>
               <BrioVideo class="big-video" v-if="brioStream"  :stream-object="brioStream" key="brio-video"></BrioVideo>
               <div v-else class="big-video"><p>No BRIO stream acquired</p></div>
             </v-flex>
@@ -224,6 +224,14 @@ export default {
   // margin: 100px;
   // left: 0;
   // top: 0;
+}
+
+.no-overflow {
+  overflow:hidden;
+}
+
+.hide-roof {
+  transform: translate(0,-25%); 
 }
 
 #overlay {
