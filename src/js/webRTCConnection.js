@@ -42,6 +42,7 @@ export default class webRTCConnection {
 
     // TODO: keep turn server user in an .env file so that we at least doesn't share it on github.
     this.pcConfig = {
+      sdpSemantics:'unified-plan',
       iceServers: [
         { urls: 'stun:stun.l.google.com:19302' },
         {
